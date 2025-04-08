@@ -1,0 +1,121 @@
+/* General */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+/* Contenedor de la página de login */
+.login-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: black; /* Fondo negro */
+  padding: 20px;
+}
+
+/* Contenedor del logo */
+.logo-container {
+  margin-bottom: 20px;
+}
+
+.logo {
+  width: 100px;
+  height: 100px;
+  animation: rotateLogo 5s linear infinite;
+}
+
+@keyframes rotateLogo {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Caja de login */
+.login-box {
+  background-color: white;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px; /* Caja de login más estrecha */
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.login-box h2 {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 24px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.input-group label {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #007BFF;
+}
+
+/* Estilo del botón de login */
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Estilos para el footer */
+.footer {
+  position: absolute;
+  bottom: 10px;
+  text-align: center;
+  color: #333;
+  font-size: 14px;
+}
+
+.footer p {
+  margin: 0;
+}
+
+/* Estilos responsivos para pantallas pequeñas */
+@media (max-width: 768px) {
+  .login-box {
+    width: 80%; /* En pantallas medianas, la caja ocupa el 80% */
+  }
+}
+
+@media (max-width: 480px) {
+  .login-box {
+    width: 90%; /* En pantallas muy pequeñas, la caja ocupa el 90% */
+  }
+}

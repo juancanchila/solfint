@@ -1,0 +1,33 @@
+.clients-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .clients-table th,
+  .clients-table td {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+  }
+
+  .clients-table td {
+    font-family: monospace; /* para mostrar correctamente ├── └── */
+  }
+
+  .pagination {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .pagination button {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+  }
+
+  .pagination button.active {
+    background: #007bff;
+    color: white;
+    font-weight: bold;
+  }

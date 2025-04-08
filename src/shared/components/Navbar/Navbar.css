@@ -1,0 +1,64 @@
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #333;
+  color: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  transition: padding 0.3s ease;
+  height: 66px;
+
+}
+
+.navbar.collapsed {
+  padding: 5px 20px; /* Reduce padding cuando el sidebar está abierto */
+
+}
+.logo-container{
+  margin-bottom: 0px;
+}
+
+.navbar .logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.navbar .logo {
+  width: 30px;
+  margin-right: 10px;
+}
+
+.navbar .menu-btn {
+  font-size: 30px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+
+.back {
+	margin-top: -11px;
+	margin-right: -30px;
+}
+
+@media (max-width: 768px) {
+  .back {
+    margin-top: -11px;
+    margin-right: -30px;
+  }
+
+}
+
+@media (max-width: 268px) {
+  .back {
+display: node;
+  }
+
+}

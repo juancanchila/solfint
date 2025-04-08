@@ -1,0 +1,123 @@
+  /* Títulos y subtítulos */
+  .profile-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+    text-align: center;
+  }
+
+  .profile-subtitle {
+    font-size: 20px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #444;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+  }
+
+  /* Párrafo intro */
+  .profile-paragraph {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+
+  /* Foto de perfil */
+  .profile-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ccc;
+    display: block;
+    margin: 0 auto 20px auto;
+  }
+
+  /* Roles */
+  .profile-roles {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 10px;
+  }
+
+  .profile-roles li {
+    font-size: 15px;
+    padding: 6px 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    color: #333;
+  }
+
+  /* Info en columnas */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  /* Fila de datos */
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    background: #f7f7f7;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+  }
+
+  .info-label {
+    font-weight: bold;
+    color: #333;
+  }
+
+  .info-value {
+    color: #333;
+    padding: 5px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+  }
+
+  /* Estilo para listas tipo excel */
+  .info-grid-excel {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .info-header {
+    font-weight: bold;
+    color: #444;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .roles-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .roles-list li {
+    padding: 8px 10px;
+    background: #efefef;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 6px;
+  }
+
+  .profile-page {
+    font-family: 'Arial', sans-serif;
+    background-color: black;
+    min-height: 107vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white; /* para que el texto sea visible en fondo negro */
+  }

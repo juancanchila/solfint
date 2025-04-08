@@ -1,0 +1,62 @@
+.send-code-container {
+    background: black;
+    color: white;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .phone-info {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+
+  .input-code {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+
+  .code-box {
+    width: 40px;
+    height: 50px;
+    background-color: white;
+    color: black;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 6px;
+    font-weight: bold;
+  }
+
+  .keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 70px);
+    gap: 15px;
+  }
+
+  .key {
+    width: 70px;
+    height: 70px;
+    background-color: #111;
+    color: white;
+    font-size: 22px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  .key-ok {
+    background-color: green;
+    color: white;
+  }
+
+  .key-del {
+    background-color: red;
+    color: white;
+  }

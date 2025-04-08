@@ -1,0 +1,87 @@
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: -250px;
+  background-color: #2c2c2c;
+  color: white;
+  transition: left 0.3s ease-in-out;
+  padding-top: 70px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  z-index: 10;
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+.sidebar .close-btn {
+  position: absolute;
+  top: 50px;
+  right: 20px;
+  color: white;
+  background-color: transparent;
+  border: none;
+  font-weight: bold;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.sidebar .sidebar-links {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.sidebar .sidebar-links li {
+  border-bottom: 1px solid #444;
+}
+
+.sidebar .sidebar-links li:last-child {
+  border-bottom: none;
+}
+
+.sidebar .sidebar-links li button {
+  width: 100%;
+  background: none;
+  border: none;
+  color: white;
+  text-align: left;
+  padding: 15px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar .sidebar-links li button:hover {
+  background-color: #444;
+  color: #ddd;
+}
+
+
+.sidebar .sidebar-submenu {
+  list-style-type: none;
+  padding-left: 20px;
+  background-color: #333;
+}
+
+.sidebar .sidebar-submenu li button {
+  padding: 12px 20px;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.sidebar .sidebar-submenu li button:hover {
+  background-color: #555;
+  color: white;
+}
+
+.sidebar .dropdown-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}

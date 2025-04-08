@@ -1,0 +1,77 @@
+/* =============== CONTAINER GENERAL ================= */
+.layout-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+  }
+
+  /* =============== SIDEBAR ================= */
+  .sidebar-open .main-content {
+    margin-left: 250px; /* Ajuste dinámico del espacio cuando el sidebar está abierto */
+    transition: margin-left 0.3s ease;
+  }
+
+  /* =============== MAIN CONTENT ================= */
+  .main-content {
+    flex: 1;
+    padding: 0;
+    background-color: #f4f4f4;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+    margin-top: 60px; /* Altura del navbar fijo */
+  }
+
+  /* =============== CONTENT WRAPPER ================= */
+  .content-wrapper {
+    padding: 20px;
+    background: #fff;
+    width: 80%;
+  margin:
+auto;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    min-height: calc(100vh - 60px); /* Para cubrir toda la pantalla debajo del navbar */
+  }
+
+  /* =============== RESPONSIVE ================= */
+  @media (max-width: 768px) {
+    .sidebar-open .main-content {
+      margin-left: 0;
+    }
+
+    .content-wrapper {
+      padding: 15px;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .sidebar-open .main-content {
+      margin-left: 250px;
+    }
+
+    .content-wrapper {
+      padding: 30px;
+    }
+  }
+
+  /* =============== GRID CARDS ================= */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  body {
+	font-family: 'Arial', sans-serif;
+	background-color: black;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}

@@ -1,0 +1,53 @@
+.card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    margin-top: 20px;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .card-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin: 0;
+  }
+
+  .arrow {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+    color: #555;
+  }
+
+  .arrow.rotate {
+    transform: rotate(180deg);
+  }
+
+  .roles-table {
+    margin-top: 16px;
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .roles-table th,
+  .roles-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .roles-table th {
+    background-color: #f0f0f0;
+    color: #444;
+  }
+
+  .roles-table tr:hover {
+    background-color: #f9f9f9;
+  }
