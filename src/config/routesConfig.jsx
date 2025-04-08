@@ -11,44 +11,67 @@ import Clientes from '../components/Clients/Clients.jsx';
 import AddClientPage from '../components/Clients/AddClientPage.jsx';
 import Users from '../components/Users/Users.jsx';
 import AddUserPage from '../components/Users/AddUserPage.jsx';
+
 const routes = [
+  // Splash screen
   {
     path: '/',
     element: <SplashScreen />
   },
+
+  // Login (público)
   {
-    path: '/',
-    element: <LoginRoute />, // 👈 Aquí envuelves las rutas públicas
-    children: [
-      { path: 'login', element: <Login /> },
-      { path: 'send-code', element: <SendCode /> }
-    ]
-  },
-  {
-    path: '/',
-    element: <PrivateRoute />,
-    children: [
-      { path: 'home', element: <Home /> },
-      {
-        path: 'profile/:userId?',
-        element: <Profile />
-      },
-      { path: 'addclient', element: <AddClientPage /> },
-      { path: 'adduser', element: <AddUserPage /> },
-    ]
-  },
-  {
-    path: '/',
-    element: <RoleRoute />,
-    children: [
-      { path: 'users', element: <Users/> },
-      { path: 'clients', element: <Clientes /> }
-    ]
+    path: '/login',
+    element: <Login />
   },
 
   {
+    path: '/send-code',
+    element: <SendCode />
+  },
+
+  // Rutas privadas protegidas por PrivateRoute
+  {
+    element: <PrivateRoute />,
+    children: [
+      {
+        path: '/home',
+        element: <Home />
+      },
+      {
+        path: '/profile/:userId?',
+        element: <Profile />
+      },
+      {
+        path: '/addclient',
+        element: <AddClientPage />
+      },
+      {
+        path: '/adduser',
+        element: <AddUserPage />
+      }
+    ]
+  },
+
+  // Rutas protegidas por rol
+  {
+    element: <RoleRoute />,
+    children: [
+      {
+        path: '/users',
+        element: <Users />
+      },
+      {
+        path: '/clients',
+        element: <Clientes />
+      }
+    ]
+  },
+
+  // Ruta por defecto para cualquier path no encontrado
+  {
     path: '*',
-    element: <Navigate to="/" />
+    element: <Navigate to="/" replace />
   }
 ];
 

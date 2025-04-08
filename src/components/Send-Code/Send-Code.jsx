@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import './Send-Code.css';
 import { useNavigate } from 'react-router-dom';
+import { AuthService } from '../../services/authService'; // ajusta según tu estructura
 
 function SendCode() {
-  const user = {
-    phone: '+57 3121234567' // Suponiendo que ya tienes este dato en contexto o localStorage
-  };
-
-  const lastDigits = user.phone.slice(-4);
+  const phone = localStorage.getItem('phone') || '+573121234567'; // fallback
+  const lastDigits = phone.slice(-4);
   const [code, setCode] = useState('');
   const navigate = useNavigate();
 
@@ -19,12 +17,23 @@ function SendCode() {
     setCode(code.slice(0, -1));
   };
 
-  const handleSubmit = () => {
-    if (code.length === 6) {
-      alert(`Código ingresado: ${code}`);
-      navigate('/home'); // redirige a home o a donde quieras
-    } else {
+  const handleSubmit = async () => {
+    if (code.length !== 6) {
       alert('Ingresa un código válido de 6 dígitos');
+      return;
+    }
+
+    try {
+      const verified = await AuthService.verifyCode(code);
+      if (verified) {
+        navigate('/home');
+      } else {
+        alert('Código incorrecto');
+        navigate('/login');
+      }
+    } catch (err) {
+      alert(err.message);
+      navigate('/login');
     }
   };
 
@@ -44,7 +53,6 @@ function SendCode() {
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
           <button key={n} className="key" onClick={() => handleDigit(n)}>{n}</button>
         ))}
-
         <button className="key key-ok" onClick={handleSubmit}>OK</button>
         <button className="key" onClick={() => handleDigit(0)}>0</button>
         <button className="key key-del" onClick={handleDelete}>⌫</button>

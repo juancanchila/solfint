@@ -1,13 +1,10 @@
-// src/routes/RoleRoute.jsx
 import { Navigate, Outlet } from 'react-router-dom';
 
-const RoleRoute = () => {
+const VerifiedRoute = () => {
+  const isVerified = localStorage.getItem('isVerified') === 'true';
 
-  const role = localStorage.getItem('role');
-  const isAdmin = role === 'admin' || role === 'Super Admin';
-
-
-  return isAdmin ? <Outlet /> : <Navigate to="/home" replace />;
+  // Si está verificado, redirige a home, si no, deja seguir
+  return !isVerified ? <Outlet /> : <Navigate to="/home" replace />;
 };
 
-export default RoleRoute;
+export default VerifiedRoute;

@@ -17,15 +17,19 @@ function Login() {
 
     try {
       const user = await AuthService.login(username, password);
+      const isVerified = localStorage.getItem('isVerified');
+      console.log(user);
 
       if (user.token) {
         alert(user.message);
 
-        if (!user.isVerified) {
-          navigate("/send-code");
+        if (isVerified === 'true') {
+          // Solo cuando sea exactamente "true"
+          navigate('/home');
         } else {
-          navigate("/home");
+          navigate('/send-code');
         }
+
       } else {
         alert("Error: Token no recibido");
       }

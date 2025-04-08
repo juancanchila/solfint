@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
-
+import UserService from './userService';
 
 const API_URL = 'http://161.35.233.204:3000';
 const LOGIN_ENDPOINT = '/api/v1/login';
@@ -20,7 +20,6 @@ export class AuthService {
       if (user.token) {
         console.log('Almacenando');
         localStorage.setItem('auth_token', user.token);
-        localStorage.setItem('isVerified', user.isVerified);
         localStorage.setItem('userId', user.userid);
         // Asegúrate de que haya al menos un rol en el array
   if (user.role && user.role.length > 0) {
@@ -37,8 +36,7 @@ export class AuthService {
 
   static logout() {
 
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('isVerified');
+    localStorage.clear();
   }
 
   static isAuthenticated() {
@@ -60,4 +58,42 @@ export class AuthService {
       return false;
     }
   }
+
+  static async verifyCode(code) {
+    const token = localStorage.getItem('auth_token');
+    const userId = localStorage.getItem('userId');
+  
+    if (!token || !userId) {
+      throw new Error('Token o ID de usuario faltante');
+    }
+  
+    try {
+      const user = await UserService.getUserById(userId);
+      if (!user || !user.phone) {
+        throw new Error('No se encontró el número de teléfono del usuario');
+      }
+  
+      const response = await axios.post(`${API_URL}${VITE_VERIFY}`, {
+        code,
+        to: user.phone, // ✅ Aquí se envía el número de teléfono
+        token
+      });
+  
+      if (response.data.token) {
+        console.log('Almacenando');
+        localStorage.setItem('auth_token', user.token);
+        localStorage.setItem('userId', user.userid);
+        localStorage.setItem('isVerified', true);
+        return true;
+      }
+  
+      return false;
+    } catch (error) {
+      console.error('Error verificando código:', error.response?.data?.message || error.message);
+      throw new Error(error.response?.data?.message || 'Error al verificar el código');
+    }
+  }
+  
+  
+  
 }
