@@ -193,7 +193,7 @@ function AddUserForm() {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={4}>
             <TextField
               select
               fullWidth
@@ -214,7 +214,7 @@ function AddUserForm() {
           </Grid>
 
           {/* Fila 4 */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={4}>
             <TextField
               select
               fullWidth
