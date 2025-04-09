@@ -22,7 +22,6 @@ function AddUserForm() {
     telefono: '',
     whatsapp: '',
     cargo: '',
-    foto: '',
     fullName: '',
     clientId: '',
     roleIds: [],
@@ -91,7 +90,6 @@ function AddUserForm() {
         telefono: formData.telefono,
         whatsapp: formData.whatsapp,
         cargo: formData.cargo,
-        foto: formData.foto,
         fullName: formData.fullName,
         clientId: Number(formData.clientId),
         roleIds: formData.roleIds,
@@ -186,17 +184,6 @@ function AddUserForm() {
               onChange={handleChange}
             />
           </Grid>
-
-          {/* Fila 3 */}
-          <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              label="Foto (URL)"
-              name="foto"
-              value={formData.foto}
-              onChange={handleChange}
-            />
-          </Grid>
           <Grid item xs={12} md={4}>
             <TextField
               fullWidth
@@ -206,7 +193,7 @@ function AddUserForm() {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <TextField
               select
               fullWidth
@@ -227,7 +214,7 @@ function AddUserForm() {
           </Grid>
 
           {/* Fila 4 */}
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <TextField
               select
               fullWidth
@@ -246,6 +233,9 @@ function AddUserForm() {
               ))}
             </TextField>
           </Grid>
+
+
+
 
           {/* Botón */}
           <Grid item xs={12} display="flex" justifyContent="flex-end" mt={2}>

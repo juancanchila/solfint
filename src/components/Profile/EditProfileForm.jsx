@@ -24,7 +24,6 @@ function EditUserForm() {
     phone: '',
     whatsapp: '',
     jobTitle: '',
-    foto: '',
     fullName: '',
     clientId: '',
     roleIds: [],
@@ -53,7 +52,6 @@ function EditUserForm() {
           phone: userData.phone || '',
           whatsapp: userData.whatsapp || '',
           jobTitle: userData.jobTitle || '',
-          foto: userData.foto || '',
           fullName: userData.fullName,
           clientId: String(userData.clientId),
           roleIds: userData.roleIds || [],
@@ -203,16 +201,6 @@ function EditUserForm() {
               label="Cargo"
               name="jobTitle"
               value={formData.jobTitle}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              label="Foto (URL)"
-              name="foto"
-              value={formData.foto}
               onChange={handleChange}
             />
           </Grid>

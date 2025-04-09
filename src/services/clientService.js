@@ -11,7 +11,10 @@ const ClientService = {
       const response = await axios.get(`${API_URL}${CLIENTS_ENDPOINT}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      return response.data;
+    // Filtrar cliente con id 1
+    const filteredClients = response.data.filter(client => client.id !== 1);
+
+    return filteredClients;
     } catch (error) {
       console.error('Error al obtener los clientes:', error);
       throw error;
