@@ -1,7 +1,7 @@
 // src/routes/PrivateRoute.jsx
 import React, { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import jwtDecode from 'jwt-decode'; // Necesitas instalar con: npm install jwt-decode
+import { jwtDecode } from 'jwt-decode';
 import { AuthService } from '../services/authService';
 import Spinner from '../shared/components/Spinner/Spinner';
 
