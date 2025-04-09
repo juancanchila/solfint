@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   TextField,
   Button,
@@ -13,21 +13,24 @@ import UserService from '../../services/userService';
 import ClientService from '../../services/clientService';
 import alertService from '../../services/alertService';
 
-function AddUserForm() {
-    const navigate = useNavigate();
+function EditUserForm() {
+  const navigate = useNavigate();
+  const { userId } = useParams();
+
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
-    telefono: '',
+    phone: '',
     whatsapp: '',
-    cargo: '',
+    jobTitle: '',
     foto: '',
     fullName: '',
     clientId: '',
     roleIds: [],
   });
 
+  const [originalData, setOriginalData] = useState({});
   const [errors, setErrors] = useState({});
   const [roles, setRoles] = useState([]);
   const [clients, setClients] = useState([]);
@@ -35,29 +38,39 @@ function AddUserForm() {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const [rolesData, clientsData] = await Promise.all([
+        const [rolesData, clientsData, userData] = await Promise.all([
           UserService.getRoles(),
           ClientService.getClients(),
+          UserService.getUserById(userId),
         ]);
 
         setRoles(rolesData);
         setClients(clientsData);
 
-        const clientData = JSON.parse(localStorage.getItem('client_data'));
-        if (clientData?.id) {
-          setFormData((prev) => ({ ...prev, clientId: clientData.id }));
-        }
+        const initialData = {
+          username: userData.username,
+          email: userData.email,
+          phone: userData.phone || '',
+          whatsapp: userData.whatsapp || '',
+          jobTitle: userData.jobTitle || '',
+          foto: userData.foto || '',
+          fullName: userData.fullName,
+          clientId: String(userData.clientId),
+          roleIds: userData.roleIds || [],
+        };
+
+        setOriginalData(initialData);
+        setFormData({ ...initialData, password: '' });
       } catch (error) {
-        console.error('Error cargando datos iniciales:', error);
+        console.error('Error cargando datos:', error);
       }
     };
 
     fetchInitialData();
-  }, []);
+  }, [userId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     if (name === 'roleIds') {
       setFormData((prev) => ({ ...prev, roleIds: [value] }));
     } else {
@@ -65,64 +78,71 @@ function AddUserForm() {
     }
   };
 
-  const validate = () => {
-    let temp = {};
-    temp.username = formData.username ? '' : 'Nombre de usuario requerido';
-    temp.fullName = formData.fullName ? '' : 'Nombre completo requerido';
-    temp.email = /\S+@\S+\.\S+/.test(formData.email) ? '' : 'Correo inválido';
-    temp.password = formData.password.length >= 6 ? '' : 'Mínimo 6 caracteres';
-    temp.telefono = /^\d{10}$/.test(formData.telefono) ? '' : 'Teléfono debe tener 10 dígitos';
-    temp.roleIds = formData.roleIds.length > 0 ? '' : 'Seleccione un rol';
-    temp.clientId = formData.clientId ? '' : 'Seleccione un cliente';
-    setErrors(temp);
-    return Object.values(temp).every((x) => x === '');
-  };
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
+
+    const payload = {};
+    const tempErrors = {};
+
+    Object.keys(originalData).forEach((key) => {
+      const newValue = formData[key];
+      const oldValue = originalData[key];
+
+      if (newValue !== oldValue) {
+        if (key === 'clientId' && !newValue) {
+          tempErrors[key] = 'Seleccione un cliente';
+        } else if (key === 'roleIds' && (!newValue || newValue.length === 0)) {
+          tempErrors[key] = 'Seleccione un rol';
+        } else if (key === 'email' && newValue && !/\S+@\S+\.\S+/.test(newValue)) {
+          tempErrors[key] = 'Correo inválido';
+        } else if (key === 'phone' && newValue && !/^\d{10}$/.test(newValue)) {
+          tempErrors[key] = 'Teléfono debe tener 10 dígitos';
+        }
+
+        payload[key] = key === 'clientId' ? Number(newValue) : newValue;
+      }
+    });
+
+    // Solo si se ingresó nueva contraseña
+    if (formData.password.trim() !== '') {
+      payload.password = formData.password;
+    }
+
+    setErrors(tempErrors);
+    if (Object.keys(tempErrors).length > 0) return;
+
+    if (Object.keys(payload).length === 0) {
+      alertService.confirmAlert({
+        message: 'No se han realizado cambios',
+        type: 'info',
+      });
+      return;
+    }
 
     try {
-      const payload = {
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        telefono: formData.telefono,
-        whatsapp: formData.whatsapp,
-        cargo: formData.cargo,
-        foto: formData.foto,
-        fullName: formData.fullName,
-        clientId: Number(formData.clientId),
-        roleIds: formData.roleIds,
-      };
-
-      await UserService.addUser(payload);
+      await UserService.updateUser(userId, payload);
 
       alertService.confirmAlert({
-        message: 'Usuario agregado exitosamente',
+        message: 'Usuario actualizado exitosamente',
         type: 'success',
       });
       navigate('/users');
     } catch (error) {
-
       console.log(error);
       alertService.confirmAlert({
-        message: `Error al agregar el usuario`,
+        message: `Error al actualizar el usuario`,
         type: 'error',
       });
     }
   };
 
-
   return (
     <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
       <Typography variant="h6" gutterBottom>
-        Agregar Nuevo Usuario
+        Editar Usuario
       </Typography>
       <Box component="form" onSubmit={handleSubmit}>
         <Grid container spacing={2}>
-          {/* Fila 1 */}
           <Grid item xs={12} md={4}>
             <TextField
               fullWidth
@@ -149,23 +169,23 @@ function AddUserForm() {
             <TextField
               fullWidth
               type="password"
-              label="Contraseña"
+              label="Contraseña (opcional)"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              error={!!errors.password}
-              helperText={errors.password}
+              helperText="Solo llene si desea cambiar la contraseña"
             />
           </Grid>
 
-          {/* Fila 2 */}
           <Grid item xs={12} md={4}>
             <TextField
               fullWidth
               label="Teléfono"
-              name="telefono"
-              value={formData.telefono}
+              name="phone"
+              value={formData.phone}
               onChange={handleChange}
+              error={!!errors.phone}
+              helperText={errors.phone}
             />
           </Grid>
           <Grid item xs={12} md={4}>
@@ -181,13 +201,12 @@ function AddUserForm() {
             <TextField
               fullWidth
               label="Cargo"
-              name="cargo"
-              value={formData.cargo}
+              name="jobTitle"
+              value={formData.jobTitle}
               onChange={handleChange}
             />
           </Grid>
 
-          {/* Fila 3 */}
           <Grid item xs={12} md={4}>
             <TextField
               fullWidth
@@ -204,6 +223,8 @@ function AddUserForm() {
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
+              error={!!errors.fullName}
+              helperText={errors.fullName}
             />
           </Grid>
           <Grid item xs={12} md={4}>
@@ -226,7 +247,6 @@ function AddUserForm() {
             </TextField>
           </Grid>
 
-          {/* Fila 4 */}
           <Grid item xs={12} md={4}>
             <TextField
               select
@@ -247,10 +267,9 @@ function AddUserForm() {
             </TextField>
           </Grid>
 
-          {/* Botón */}
           <Grid item xs={12} display="flex" justifyContent="flex-end" mt={2}>
             <Button variant="contained" color="primary" type="submit">
-              GUARDAR USUARIO
+              ACTUALIZAR USUARIO
             </Button>
           </Grid>
         </Grid>
@@ -259,4 +278,4 @@ function AddUserForm() {
   );
 }
 
-export default AddUserForm;
+export default EditUserForm;

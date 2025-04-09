@@ -91,9 +91,9 @@ function ClientsList() {
     const action = e.target.value;
 
     if (action === 'ver') {
-      navigate(`/clients/view/${clientId}`);
+      navigate(`/clients/${clientId}`);
     } else if (action === 'editar') {
-      navigate(`/clients/edit/${clientId}`);
+      navigate(`/editclient/${clientId}`);
     } else if (action === 'eliminar') {
       const confirmed = window.confirm('¿Estás seguro de eliminar este cliente? Esta acción no se puede deshacer.');
       if (confirmed) {

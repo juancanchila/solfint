@@ -77,13 +77,14 @@ function UsersList() {
 
     if (action === 'ver') {
       navigate(`/profile/${userId}`);
+    } else if (action === 'editar') {
+      navigate(`/user/${userId}`);
     } else if (action === 'eliminar') {
       const confirmed = window.confirm('¿Estás seguro de eliminar este usuario? Esta acción no se puede revertir.');
       if (confirmed) {
         try {
           await UserService.deleteUser(userId);
           alert('Usuario eliminado correctamente');
-          // Aquí asumes que tienes estado setUsers y setFiltered
           setUsers(prev => prev.filter(user => user.id !== userId));
           setFiltered(prev => prev.filter(user => user.id !== userId));
         } catch (error) {
@@ -92,6 +93,7 @@ function UsersList() {
         }
       }
     }
+
 
     e.target.selectedIndex = 0; // Resetear selección a default
   };

@@ -11,6 +11,9 @@ import Clientes from '../components/Clients/Clients.jsx';
 import AddClientPage from '../components/Clients/AddClientPage.jsx';
 import Users from '../components/Users/Users.jsx';
 import AddUserPage from '../components/Users/AddUserPage.jsx';
+import EditUserPage from '../components/Profile/EditUserPage.jsx';
+import ClientProfile from '../components/Clients/ClientProfile.jsx';
+import EditClientPage  from '../components/Clients/EditClientPage.jsx';
 
 const routes = [
   // Splash screen
@@ -21,13 +24,17 @@ const routes = [
 
   // Login (público)
   {
-    path: '/login',
-    element: <Login />
-  },
-
-  {
-    path: '/send-code',
-    element: <SendCode />
+    element: <LoginRoute />,
+    children: [
+      {
+        path: '/login',
+        element: <Login />
+      },
+      {
+        path: '/send-code',
+        element: <SendCode />
+      }
+    ]
   },
 
   // Rutas privadas protegidas por PrivateRoute
@@ -43,6 +50,19 @@ const routes = [
         element: <Profile />
       },
       {
+        path: '/clients/:clientId',
+        element: <ClientProfile />
+      },
+      {
+        path: '/editclient/:clientId',
+        element: <EditClientPage />
+      }
+      ,
+      {
+        path: '/user/:userId?',
+        element: <EditUserPage  />
+      },
+      {
         path: '/addclient',
         element: <AddClientPage />
       },
@@ -52,6 +72,7 @@ const routes = [
       }
     ]
   },
+
 
   // Rutas protegidas por rol
   {

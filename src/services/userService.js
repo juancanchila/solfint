@@ -85,6 +85,42 @@ const UserService = {
       throw error;
     }
   },
+  updateUser: async (id, updatedData) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const payload = {};
+
+      // Construir payload solo con campos definidos en updatedData
+      for (const key of Object.keys(updatedData)) {
+        if (Object.hasOwn(updatedData, key) && updatedData[key] !== undefined) {
+          payload[key] = updatedData[key];
+        }
+      }
+
+      // Si no hay nada que actualizar, retornamos null
+      if (Object.keys(payload).length === 0) {
+        console.log('No hay campos para actualizar.');
+        return null;
+      }
+
+      const response = await axios.put(
+        `${API_URL}${USERS_ENDPOINT}/${id}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error('Error al actualizar usuario:', error.response?.data || error.message);
+      throw error;
+    }
+  }
+
 };
 
 
