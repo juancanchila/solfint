@@ -24,7 +24,6 @@ function Login() {
         alert(user.message);
 
         if (isVerified === 'true') {
-          // Solo cuando sea exactamente "true"
           navigate('/home');
         } else {
           navigate('/send-code');
@@ -76,6 +75,10 @@ function Login() {
           <button type="submit" className="login-btn" disabled={loading}>
             {loading ? "Ingresando..." : "Iniciar sesión"}
           </button>
+
+          <p className="forgot-password">
+            <a href="/reset-password">¿Olvidaste tu contraseña?</a>
+          </p>
         </form>
       </div>
 

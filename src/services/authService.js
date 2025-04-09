@@ -101,6 +101,29 @@ export class AuthService {
     }
   }
 
+  static async recoverPassword(email) {
+    try {
+      const response = await axios.post(`${API_URL}/api/v1/login/reset-password`, {
+        email
+      });
 
+      const data = response.data;
+
+      if (data.token) {
+        console.log('Almacenando');
+        localStorage.setItem('auth_token', data.token);
+        localStorage.setItem('userId', data.userId);
+        localStorage.setItem('isreset', true);
+        return true;
+      }else{
+        return false;
+      }
+
+
+    } catch (error) {
+      console.error('Error al solicitar restablecimiento de contraseña:', error.response?.data?.message || error.message);
+      throw new Error(error.response?.data?.message || 'No se pudo procesar la solicitud');
+    }
+  }
 
 }
