@@ -184,6 +184,18 @@ function AddUserForm() {
               onChange={handleChange}
             />
           </Grid>
+
+          {/* Fila 3
+          <Grid item xs={12} md={4}>
+            <TextField
+              fullWidth
+              label="Foto (URL)"
+              name="foto"
+              value={formData.foto}
+              onChange={handleChange}
+            />
+          </Grid>*/}
+
           <Grid item xs={12} md={4}>
             <TextField
               fullWidth
@@ -233,9 +245,6 @@ function AddUserForm() {
               ))}
             </TextField>
           </Grid>
-
-
-
 
           {/* Botón */}
           <Grid item xs={12} display="flex" justifyContent="flex-end" mt={2}>
