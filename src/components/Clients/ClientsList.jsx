@@ -17,6 +17,7 @@ function ClientsList() {
     const fetchClients = async () => {
       try {
         const data = await ClientService.getClients();
+        console.log(data);
         setClients(data);
         const hierarchy = getHierarchicalClients(data);
         setFiltered(hierarchy);
@@ -48,10 +49,10 @@ function ClientsList() {
 
     return result;
   };
-
   const handleFilterChange = ({ field, value, ascending }) => {
     let hierarchy = getHierarchicalClients(clients);
 
+    // Filtrado por valor
     if (value.trim() !== '') {
       hierarchy = hierarchy.filter((client) => {
         const clientValue = client[field];
@@ -63,14 +64,27 @@ function ClientsList() {
       });
     }
 
+    // Ordenación de acuerdo al campo seleccionado
     hierarchy.sort((a, b) => {
       const aVal = a[field];
       const bVal = b[field];
 
       if (field === 'createdAt') {
+        const timestampA = new Date(aVal).getTime();
+        const timestampB = new Date(bVal).getTime();
+
+        // Agrega un log para ver los valores antes de comparar
+        console.log('Comparando fechas:', aVal, bVal);
+        console.log('Timestamp A:', timestampA, 'Timestamp B:', timestampB);
+
+        if (isNaN(timestampA) || isNaN(timestampB)) {
+          console.error("Fecha inválida", aVal, bVal);
+          return 0; // Si las fechas son inválidas, no ordenamos
+        }
+
         return ascending
-          ? new Date(aVal) - new Date(bVal)
-          : new Date(bVal) - new Date(aVal);
+          ? timestampA - timestampB
+          : timestampB - timestampA;
       }
 
       if (typeof aVal === 'string' && typeof bVal === 'string') {
@@ -86,6 +100,8 @@ function ClientsList() {
     setCurrentPage(1);
     setNoResults(hierarchy.length === 0);
   };
+
+
 
   const handleActionChange = async (e, clientId) => {
     const action = e.target.value;

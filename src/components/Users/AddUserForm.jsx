@@ -31,6 +31,7 @@ function AddUserForm() {
   const [roles, setRoles] = useState([]);
   const [clients, setClients] = useState([]);
 
+
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
@@ -39,7 +40,9 @@ function AddUserForm() {
           ClientService.getClients(),
         ]);
 
+
         setRoles(rolesData);
+        console.log(rolesData);
         setClients(clientsData);
 
         const clientData = JSON.parse(localStorage.getItem('client_data'));
@@ -56,13 +59,15 @@ function AddUserForm() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     if (name === 'roleIds') {
-      setFormData((prev) => ({ ...prev, roleIds: [value] }));
+      // If multiple roles are selected, update as an array
+      setFormData({ ...formData, [name]: typeof value === 'string' ? value.split(',') : value });
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      setFormData({ ...formData, [name]: value });
     }
   };
+
+
 
   const validate = () => {
     let temp = {};
@@ -79,10 +84,16 @@ function AddUserForm() {
 
 
   const handleSubmit = async (e) => {
+    console.log(formData);
+
+
     e.preventDefault();
+
     if (!validate()) return;
 
+
     try {
+
       const payload = {
         username: formData.username,
         email: formData.email,
@@ -94,6 +105,9 @@ function AddUserForm() {
         clientId: Number(formData.clientId),
         roleIds: formData.roleIds,
       };
+
+
+
 
       await UserService.addUser(payload);
 
@@ -185,18 +199,7 @@ function AddUserForm() {
             />
           </Grid>
 
-          {/* Fila 3
-          <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              label="Foto (URL)"
-              name="foto"
-              value={formData.foto}
-              onChange={handleChange}
-            />
-          </Grid>*/}
-
-          <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={4}>
             <TextField
               fullWidth
               label="Nombre Completo"
@@ -206,24 +209,29 @@ function AddUserForm() {
             />
           </Grid>
           <Grid item xs={12} md={4}>
-            <TextField
-              select
-              fullWidth
-              name="roleIds"
-              label="Rol"
-              value={formData.roleIds[0] || ''}
-              onChange={handleChange}
-              error={!!errors.roleIds}
-              helperText={errors.roleIds}
-            >
-              <MenuItem value="">Seleccione un rol</MenuItem>
-              {roles.map((role) => (
-                <MenuItem key={role.id} value={role.id}>
-                  {role.name}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
+  <TextField
+    select
+    fullWidth
+    name="roleIds"
+    label="Rol"
+    value={formData.roleIds}
+    onChange={handleChange}
+    error={!!errors.roleIds}
+    helperText={errors.roleIds}
+    SelectProps={{
+      multiple: true, // Allow multiple selection
+      renderValue: (selected) => selected.map(id => roles.find(role => role.id === id)?.name).join(', '), // Display selected role names
+    }}
+  >
+    <MenuItem value="">Seleccione un rol</MenuItem>
+    {roles.map((role) => (
+      <MenuItem key={role.id} value={role.id}>
+        {role.name}
+      </MenuItem>
+    ))}
+  </TextField>
+</Grid>
+
 
           {/* Fila 4 */}
           <Grid item xs={12} md={4}>

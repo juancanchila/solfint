@@ -35,7 +35,7 @@ function Profile() {
   return (
 
     <Layout>
-  <h1>Perfil Info</h1>
+  <h1>Información de Perfil</h1>
       <p>Esta es la información de la cuenta registrada en el sistema.</p>
 
       {!user ? (

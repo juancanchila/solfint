@@ -17,6 +17,7 @@ function UsersList() {
     const fetchUsers = async () => {
       try {
         const data = await UserService.getUsers();
+        console.log(data );
         setUsers(data);
         setFiltered(data);
       } catch (error) {
@@ -28,8 +29,10 @@ function UsersList() {
   }, []);
 
   const handleFilterChange = ({ field, value, ascending }) => {
+    // Filtrado y ordenación de usuarios
     let result = [...users];
 
+    // Filtrar por el valor dado en el campo
     if (value.trim() !== '') {
       result = result.filter((user) => {
         const userValue = user[field];
@@ -37,33 +40,49 @@ function UsersList() {
           userValue !== null && userValue !== undefined
             ? String(userValue).toLowerCase()
             : '';
-        return fieldValue.includes(value.toLowerCase());
+        return fieldValue.includes(value.toLowerCase()); // Comparar con el valor de búsqueda
       });
     }
 
+    // Ordenación de acuerdo al campo seleccionado (name, email, createdAt, etc.)
     result.sort((a, b) => {
       const aVal = a[field];
       const bVal = b[field];
 
+      // Si estamos ordenando por fecha (createdAt), necesitamos convertirlo a un timestamp
       if (field === 'createdAt') {
-        return ascending
-          ? new Date(aVal) - new Date(bVal)
-          : new Date(bVal) - new Date(aVal);
+        const timestampA = new Date(aVal).getTime();
+        const timestampB = new Date(bVal).getTime();
+
+        // Agrega un log para ver los valores antes de comparar
+        console.log('Comparando fechas:', aVal, bVal);
+        console.log('Timestamp A:', timestampA, 'Timestamp B:', timestampB);
+
+        // Verificar que las fechas sean válidas
+        if (isNaN(timestampA) || isNaN(timestampB)) {
+          console.error("Fecha inválida", aVal, bVal);
+          return 0; // Si las fechas son inválidas, no ordenamos
+        }
+
+        return ascending ? timestampA - timestampB : timestampB - timestampA; // Ordenar por timestamp
       }
 
+      // Si el campo es un texto (como name, email), ordenamos alfabéticamente
       if (typeof aVal === 'string' && typeof bVal === 'string') {
-        return ascending
-          ? aVal.localeCompare(bVal)
-          : bVal.localeCompare(aVal);
+        return ascending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
       }
 
+      // Si es un número (como id), lo ordenamos numéricamente
       return ascending ? aVal - bVal : bVal - aVal;
     });
 
+    // Actualizamos el estado con los resultados filtrados y ordenados
     setFiltered(result);
-    setCurrentPage(1);
-    setNoResults(result.length === 0);
+    setCurrentPage(1); // Reseteamos la página a la 1 después del filtro
+    setNoResults(result.length === 0); // Mostrar mensaje si no hay resultados
   };
+
+
 
   const paginate = (data) => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -101,8 +120,8 @@ function UsersList() {
 
   return (
     <div className="card">
-      <TableFilter
-        fields={['id', 'name', 'email', 'createdAt']}
+    <TableFilter
+        fields={['id', 'fullName', 'email','createdAt']}
         onFilter={handleFilterChange}
       />
 
@@ -126,7 +145,7 @@ function UsersList() {
             paginated.map((user) => (
               <tr key={user.id}>
                 <td>{user.id}</td>
-                <td>{user.fullName}</td>
+                <td>{user.name || user.fullName}</td>
                 <td>{user.email}</td>
                 <td>
                   <select onChange={(e) => handleActionChange(e, user.id)}>

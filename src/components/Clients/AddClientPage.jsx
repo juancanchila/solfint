@@ -7,7 +7,7 @@ function AddClientPage() {
   return (
     <Layout>
       <div className="add-client-page">
-        <h1>Agregar Nuevo Cliente</h1>
+        <h1>Registrar Nuevo Cliente</h1>
         <p>Rellena el formulario para registrar un nuevo cliente en el sistema.</p>
         <div className="form-container">
           <AddClientForm />

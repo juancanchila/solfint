@@ -7,7 +7,7 @@ function AddUserPage() {
   return (
     <Layout>
       <div className="add-user-page">
-        <h1>Agregar Nuevo Usuario</h1>
+        <h1>Registrar Nuevo Usuario</h1>
         <p>Rellena el formulario para crear un nuevo usuario en el sistema.</p>
         <div className="form-container">
           <AddUserForm />

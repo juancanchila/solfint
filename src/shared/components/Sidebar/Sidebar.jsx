@@ -47,22 +47,22 @@ function Sidebar({ isOpen, toggleSidebar }) {
     <div className={`sidebar ${isOpen ? 'open' : ''}`}>
       <button className="close-btn" onClick={toggleSidebar}>X</button>
       <ul className="sidebar-links">
-        <li><button onClick={handleHome} className="logout-btn">Home</button></li>
-        <li><button onClick={handleProfile} className="logout-btn">Profile</button></li>
+        <li><button onClick={handleHome} className="logout-btn">Incio</button></li>
+        <li><button onClick={handleProfile} className="logout-btn">Perfil</button></li>
 
         {isAdmin && (
           <li className="sidebar-item-with-submenu">
             <button className="logout-btn dropdown-toggle">
-              Settings <FaChevronDown />
+              Configuraciones <FaChevronDown />
             </button>
             <ul className="sidebar-submenu always-open">
-              <li><button onClick={() => navigate('/users')} className="logout-btn">Users</button></li>
-              <li><button onClick={() => navigate('/clients')} className="logout-btn">Clients</button></li>
+              <li><button onClick={() => navigate('/users')} className="logout-btn">Gestión de Usuarios</button></li>
+              <li><button onClick={() => navigate('/clients')} className="logout-btn">Gestión de Clientes</button></li>
             </ul>
           </li>
         )}
 
-        <li><button onClick={handleLogout} className="logout-btn">Logout</button></li>
+        <li><button onClick={handleLogout} className="logout-btn">Salir</button></li>
       </ul>
     </div>
   );

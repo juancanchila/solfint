@@ -50,6 +50,7 @@ const UserService = {
     }
   },
   addUser: async (userData) => {
+    console.log("Almacenando");
     try {
       const token = localStorage.getItem('auth_token');
       const response = await axios.post(`${API_URL}${USERS_ENDPOINT}`, userData, {

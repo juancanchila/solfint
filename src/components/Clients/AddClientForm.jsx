@@ -14,13 +14,15 @@ import {
   InputLabel,
 } from '@mui/material';
 import alertService from '../../services/alertService';
-import ClientService from '../../services/clientService'; // Asegúrate de tener este servicio creado
-
+import ClientService from '../../services/clientService';
+import './AddClientPage.css';
 function AddClientForm() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: '',
+    nit: '',
+    centroDeCosto: '',
     email: '',
     phone: '',
     address: '',
@@ -28,13 +30,15 @@ function AddClientForm() {
     department: '',
     postalCode: '',
     description: '',
-    branchType: 'sucursal',
+    branchType: '飽ursal',
     contact1Name: '',
     contact1Phone: '',
     contact2Name: '',
     contact2Phone: '',
     parentClientId: '',
     subClientLimit: 1,
+    logo: '',
+    employeeCount: '',
   });
 
   const [clients, setClients] = useState([]);
@@ -49,7 +53,6 @@ function AddClientForm() {
         console.error('Error cargando clientes:', error);
       }
     };
-
     fetchClients();
   }, []);
 
@@ -61,8 +64,11 @@ function AddClientForm() {
   const validate = () => {
     let temp = {};
     temp.name = formData.name ? '' : 'El nombre es requerido';
+    temp.nit = formData.nit ? '' : 'El NIT es requerido';
     temp.email = /\S+@\S+\.\S+/.test(formData.email) ? '' : 'Email inválido';
-    temp.phone = formData.phone.length >= 7 ? '' : 'Teléfono inválido';
+    temp.phone = formData.phone.length === 10 ? '' : 'Teléfono debe tener 10 dígitos';
+    temp.contact1Phone = !formData.contact1Phone || formData.contact1Phone.length === 10 ? '' : 'Teléfono debe tener 10 dígitos';
+    temp.contact2Phone = !formData.contact2Phone || formData.contact2Phone.length === 10 ? '' : 'Teléfono debe tener 10 dígitos';
     setErrors(temp);
     return Object.values(temp).every((x) => x === '');
   };
@@ -72,13 +78,11 @@ function AddClientForm() {
     if (!validate()) return;
 
     try {
-      await ClientService.addClient(formData); // Aquí agregamos el cliente
-
+      await ClientService.addClient(formData);
       alertService.confirmAlert({
         message: 'Cliente agregado exitosamente',
         type: 'success',
       });
-
       navigate('/clients');
     } catch (error) {
       console.error('Error al crear cliente:', error);
@@ -96,13 +100,15 @@ function AddClientForm() {
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit} noValidate>
-        {/* Información General */}
+        {/* Información General - Exactamente 4 filas, 2 campos por fila */}
         <Typography variant="subtitle1" gutterBottom>
           Información General
         </Typography>
         <Divider sx={{ mb: 2 }} />
+
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          {/* Fila 1: Nombre y NIT */}
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
               name="name"
@@ -113,7 +119,25 @@ function AddClientForm() {
               helperText={errors.name}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              name="nit"
+              label="NIT"
+              value={formData.nit}
+              onChange={handleChange}
+              error={!!errors.nit}
+              helperText={errors.nit}
+            />
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ mb: 2 }} />
+
+        {/* Fila 2: Descripción y Tipo de Sucursal */}
+        <Grid container spacing={2}>
+        <Grid item xs={12} sm={6}>
+
             <TextField
               fullWidth
               name="description"
@@ -122,24 +146,41 @@ function AddClientForm() {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item xs={12}>
-            <FormControl fullWidth>
-              <InputLabel id="branchType-label">Tipo de Sucursal</InputLabel>
-              <Select
-                labelId="branchType-label"
-                name="branchType"
-                value={formData.branchType}
-                label="Tipo de Sucursal"
-                onChange={handleChange}
-              >
-                <MenuItem value="principal">Principal</MenuItem>
-                <MenuItem value="sucursal">Sucursal</MenuItem>
-              </Select>
-            </FormControl>
+          <Grid item xs={12} sm={6}>
+          <FormControl fullWidth> {/* Añade fullWidth aquí */}
+    <InputLabel id="branchType-label">Tipo de Sucursal</InputLabel>
+    <Select
+      fullWidth // Añade esta propiedad
+      labelId="branchType-label"
+      name="branchType"
+      value={formData.branchType}
+      label="Tipo de Sucursal"
+      onChange={handleChange}
+      sx={{
+        height: '56px' // Ajusta la altura si es necesario
+      }}
+    >
+      <MenuItem value="principal">Principal</MenuItem>
+      <MenuItem value="sucursal">Sucursal</MenuItem>
+    </Select>
+  </FormControl>
           </Grid>
+        </Grid>
 
-          {/* Cliente Padre */}
-          <Grid item xs={12}>
+        <Divider sx={{ mb: 2 }} />
+
+        {/* Fila 3: Centro de Costo y Cliente Padre */}
+        <Grid container spacing={2}>
+        <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              name="centroDeCosto"
+              label="Centro de Costo"
+              value={formData.centroDeCosto}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
               <InputLabel id="parentClientId-label">Cliente Padre</InputLabel>
               <Select
@@ -149,7 +190,7 @@ function AddClientForm() {
                 onChange={handleChange}
                 label="Cliente Padre"
               >
-                <MenuItem value="null">Sin Cliente Padre</MenuItem>
+                <MenuItem value="">Sin Cliente Padre</MenuItem>
                 {clients.map((client) => (
                   <MenuItem key={client.id} value={client.id}>
                     {client.name}
@@ -158,9 +199,13 @@ function AddClientForm() {
               </Select>
             </FormControl>
           </Grid>
+        </Grid>
 
-          {/* Límite de Subclientes */}
-          <Grid item xs={12}>
+        <Divider sx={{ mb: 2 }} />
+
+        {/* Fila 4: Límite de Subclientes y Logo */}
+        <Grid container spacing={2}>
+        <Grid item xs={12} sm={8}>
             <TextField
               fullWidth
               type="number"
@@ -168,9 +213,19 @@ function AddClientForm() {
               label="Límite de Subclientes"
               value={formData.subClientLimit}
               onChange={handleChange}
-              inputProps={{ min: 1 }}
+              slotProps={{
+                htmlInput: {  // Reemplaza inputProps por slotProps.htmlInput
+                  min: 3,    // Valor mínimo
+                  max: 10,   // Valor máximo
+                  step: 1,   // Incremento/decremento de 1 en 1
+                },
+              }}
+              error={!!errors.subClientLimit}
+              helperText={errors.subClientLimit}
             />
           </Grid>
+
+
         </Grid>
 
         {/* Datos de Contacto */}
@@ -179,7 +234,7 @@ function AddClientForm() {
         </Typography>
         <Divider sx={{ mb: 2 }} />
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
               name="email"
@@ -190,7 +245,7 @@ function AddClientForm() {
               helperText={errors.email}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
               name="phone"
@@ -201,7 +256,7 @@ function AddClientForm() {
               helperText={errors.phone}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
               name="contact1Name"
@@ -210,16 +265,18 @@ function AddClientForm() {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
               name="contact1Phone"
               label="Teléfono Contacto 1"
               value={formData.contact1Phone}
               onChange={handleChange}
+              error={!!errors.contact1Phone}
+              helperText={errors.contact1Phone}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
               name="contact2Name"
@@ -228,13 +285,26 @@ function AddClientForm() {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
               name="contact2Phone"
               label="Teléfono Contacto 2"
               value={formData.contact2Phone}
               onChange={handleChange}
+              error={!!errors.contact2Phone}
+              helperText={errors.contact2Phone}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              type="number"
+              name="employeeCount"
+              label="Cantidad de Empleados"
+              value={formData.employeeCount}
+              onChange={handleChange}
+              inputProps={{ min: 0 }}
             />
           </Grid>
         </Grid>
@@ -254,7 +324,7 @@ function AddClientForm() {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
               name="city"
@@ -263,7 +333,7 @@ function AddClientForm() {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
               name="department"
@@ -272,7 +342,7 @@ function AddClientForm() {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
               name="postalCode"
