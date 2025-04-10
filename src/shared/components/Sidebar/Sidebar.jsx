@@ -10,7 +10,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
   const userRole = localStorage.getItem('role');
   const userId = localStorage.getItem('userId'); // 👈 obtenemos userId
 
-  const isAdmin = userRole === 'admin' || userRole === 'Super Admin';
+  const isAdmin = userRole === 'Admin' || userRole === 'Super Admin';
 
   const handleLogout = () => {
     Swal.fire({
