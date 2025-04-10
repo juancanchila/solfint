@@ -8,13 +8,18 @@ import {
   Typography,
   Box,
   MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  Divider,
 } from '@mui/material';
 import UserService from '../../services/userService';
 import ClientService from '../../services/clientService';
 import alertService from '../../services/alertService';
 
 function AddUserForm() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -31,7 +36,6 @@ function AddUserForm() {
   const [roles, setRoles] = useState([]);
   const [clients, setClients] = useState([]);
 
-
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
@@ -40,9 +44,7 @@ function AddUserForm() {
           ClientService.getClients(),
         ]);
 
-
         setRoles(rolesData);
-        console.log(rolesData);
         setClients(clientsData);
 
         const clientData = JSON.parse(localStorage.getItem('client_data'));
@@ -59,15 +61,8 @@ function AddUserForm() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'roleIds') {
-      // If multiple roles are selected, update as an array
-      setFormData({ ...formData, [name]: typeof value === 'string' ? value.split(',') : value });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    setFormData({ ...formData, [name]: value });
   };
-
-
 
   const validate = () => {
     let temp = {};
@@ -76,24 +71,19 @@ function AddUserForm() {
     temp.email = /\S+@\S+\.\S+/.test(formData.email) ? '' : 'Correo inválido';
     temp.password = formData.password.length >= 6 ? '' : 'Mínimo 6 caracteres';
     temp.telefono = /^\d{10}$/.test(formData.telefono) ? '' : 'Teléfono debe tener 10 dígitos';
+    temp.whatsapp = /^\d{10}$/.test(formData.whatsapp) ? '' : 'WhatsApp debe tener 10 dígitos'; // Validación para WhatsApp
     temp.roleIds = formData.roleIds.length > 0 ? '' : 'Seleccione un rol';
     temp.clientId = formData.clientId ? '' : 'Seleccione un cliente';
     setErrors(temp);
     return Object.values(temp).every((x) => x === '');
   };
 
-
   const handleSubmit = async (e) => {
-    console.log(formData);
-
-
     e.preventDefault();
 
     if (!validate()) return;
 
-
     try {
-
       const payload = {
         username: formData.username,
         email: formData.email,
@@ -106,158 +96,170 @@ function AddUserForm() {
         roleIds: formData.roleIds,
       };
 
-
-
-
       await UserService.addUser(payload);
-
       alertService.confirmAlert({
         message: 'Usuario agregado exitosamente',
         type: 'success',
       });
       navigate('/users');
     } catch (error) {
-
-      console.log(error);
+      console.error('Error al crear usuario:', error);
       alertService.confirmAlert({
-        message: `Error al agregar el usuario`,
+        message: 'Error al agregar usuario. Intente nuevamente.',
         type: 'error',
       });
     }
   };
-
 
   return (
     <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
       <Typography variant="h6" gutterBottom>
         Agregar Nuevo Usuario
       </Typography>
-      <Box component="form" onSubmit={handleSubmit}>
+
+      <Box component="form" onSubmit={handleSubmit} noValidate>
+        <Typography variant="subtitle1" gutterBottom>
+          Información General
+        </Typography>
+        <Divider sx={{ mb: 2 }} />
+
         <Grid container spacing={2}>
-          {/* Fila 1 */}
-          <Grid item xs={12} md={4}>
+          {/* Username */}
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Nombre de Usuario"
               name="username"
+              label="Nombre de usuario"
               value={formData.username}
               onChange={handleChange}
               error={!!errors.username}
               helperText={errors.username}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+
+          {/* Full Name */}
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Correo Electrónico"
+              name="fullName"
+              label="Nombre Completo"
+              value={formData.fullName}
+              onChange={handleChange}
+              error={!!errors.fullName}
+              helperText={errors.fullName}
+            />
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ mb: 2 }} />
+
+        {/* Email */}
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
               name="email"
+              label="Correo Electrónico"
               value={formData.email}
               onChange={handleChange}
               error={!!errors.email}
               helperText={errors.email}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+
+          {/* Password */}
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              type="password"
-              label="Contraseña"
               name="password"
+              label="Contraseña"
+              type="password"
               value={formData.password}
               onChange={handleChange}
               error={!!errors.password}
               helperText={errors.password}
             />
           </Grid>
+        </Grid>
 
-          {/* Fila 2 */}
-          <Grid item xs={12} md={4}>
+        <Divider sx={{ mb: 2 }} />
+
+        {/* Phone and WhatsApp */}
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Teléfono"
               name="telefono"
+              label="Teléfono"
               value={formData.telefono}
               onChange={handleChange}
+              error={!!errors.telefono}
+              helperText={errors.telefono}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="WhatsApp"
               name="whatsapp"
+              label="WhatsApp"
               value={formData.whatsapp}
               onChange={handleChange}
+              error={!!errors.whatsapp}
+              helperText={errors.whatsapp}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              label="Cargo"
-              name="cargo"
-              value={formData.cargo}
-              onChange={handleChange}
-            />
+        </Grid>
+
+        <Divider sx={{ mb: 2 }} />
+
+        {/* Role and Client */}
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel id="roleIds-label">Roles</InputLabel>
+              <Select
+                labelId="roleIds-label"
+                multiple
+                name="roleIds"
+                value={formData.roleIds}
+                onChange={handleChange}
+                label="Roles"
+              >
+                {roles.map((role) => (
+                  <MenuItem key={role.id} value={role.id}>
+                    {role.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
 
-            <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              label="Nombre Completo"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-            />
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel id="clientId-label">Cliente</InputLabel>
+              <Select
+                labelId="clientId-label"
+                name="clientId"
+                value={formData.clientId}
+                onChange={handleChange}
+                label="Cliente"
+              >
+                {clients.map((client) => (
+                  <MenuItem key={client.id} value={client.id}>
+                    {client.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
-          <Grid item xs={12} md={4}>
-  <TextField
-    select
-    fullWidth
-    name="roleIds"
-    label="Rol"
-    value={formData.roleIds}
-    onChange={handleChange}
-    error={!!errors.roleIds}
-    helperText={errors.roleIds}
-    SelectProps={{
-      multiple: true, // Allow multiple selection
-      renderValue: (selected) => selected.map(id => roles.find(role => role.id === id)?.name).join(', '), // Display selected role names
-    }}
-  >
-    <MenuItem value="">Seleccione un rol</MenuItem>
-    {roles.map((role) => (
-      <MenuItem key={role.id} value={role.id}>
-        {role.name}
-      </MenuItem>
-    ))}
-  </TextField>
-</Grid>
+        </Grid>
 
-
-          {/* Fila 4 */}
-          <Grid item xs={12} md={4}>
-            <TextField
-              select
-              fullWidth
-              name="clientId"
-              label="Cliente"
-              value={formData.clientId}
-              onChange={handleChange}
-              error={!!errors.clientId}
-              helperText={errors.clientId}
-            >
-              <MenuItem value="">Seleccione un cliente</MenuItem>
-              {clients.map((client) => (
-                <MenuItem key={client.id} value={client.id}>
-                  {client.name}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-
-          {/* Botón */}
-          <Grid item xs={12} display="flex" justifyContent="flex-end" mt={2}>
+        {/* Submit Button */}
+        <Grid container spacing={2} sx={{ mt: 4 }}>
+          <Grid item xs={12} display="flex" justifyContent="flex-end">
             <Button variant="contained" color="primary" type="submit">
-              GUARDAR USUARIO
+              Guardar Usuario
             </Button>
           </Grid>
         </Grid>
