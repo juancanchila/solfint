@@ -47,7 +47,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
     <div className={`sidebar ${isOpen ? 'open' : ''}`}>
       <button className="close-btn" onClick={toggleSidebar}>X</button>
       <ul className="sidebar-links">
-        <li><button onClick={handleHome} className="logout-btn">Incio</button></li>
+        <li><button onClick={handleHome} className="logout-btn">Inicio</button></li>
         <li><button onClick={handleProfile} className="logout-btn">Perfil</button></li>
 
         {isAdmin && (

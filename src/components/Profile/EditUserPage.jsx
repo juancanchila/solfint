@@ -7,7 +7,7 @@ function EditUserPage() {
   return (
     <Layout>
       <div className="add-user-page">
-        <h1>Actualziar Usuario</h1>
+        <h1>Actualizar Usuario</h1>
         <p>Rellena el formulario para actualziar un usuario en el sistema.</p>
         <div className="form-container">
           <EditUserForm/>
