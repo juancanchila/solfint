@@ -1,4 +1,5 @@
 // src/routes/PrivateRoute.jsx
+
 import React, { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { AuthService } from '../services/authService';
@@ -31,9 +32,8 @@ const PrivateRoute = () => {
 export default PrivateRoute;
 
 
-
-
-/*// src/routes/PrivateRoute.jsx
+/*
+// src/routes/PrivateRoute.jsx
 import React, { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
@@ -46,7 +46,7 @@ const PrivateRoute = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = AuthService.getToken(); // Supón que esta función retorna el token actual
+      const token = AuthService.validateToken(); // Supón que esta función retorna el token actual
       if (!token) {
         setIsAuthorized(false);
         setIsValidating(false);

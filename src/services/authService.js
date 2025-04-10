@@ -90,7 +90,6 @@ export class AuthService {
       if (response.data.token) {
         console.log('Almacenando');
         localStorage.setItem('auth_token', response.data.token); // ✅ corrección
-        localStorage.setItem('userId', response.data.userid);
         localStorage.setItem('isVerified', true);
         return true;
       }
