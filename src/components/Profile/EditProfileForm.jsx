@@ -26,7 +26,8 @@ function EditUserForm() {
     jobTitle: '',
     fullName: '',
     clientId: '',
-    roleIds: [],
+    roleIds: [], // El array de roles
+    city: '', // <-- agregado
   });
 
   const [originalData, setOriginalData] = useState({});
@@ -46,6 +47,10 @@ function EditUserForm() {
         setRoles(rolesData);
         setClients(clientsData);
 
+        const assignedRole = userData.roles.find(
+          (r) => r.UserRole && r.UserRole.userId === Number(userId)
+        );
+
         const initialData = {
           username: userData.username,
           email: userData.email,
@@ -54,7 +59,8 @@ function EditUserForm() {
           jobTitle: userData.jobTitle || '',
           fullName: userData.fullName,
           clientId: String(userData.clientId),
-          roleIds: userData.roleIds || [],
+          roleIds: assignedRole ? [assignedRole.id] : [], // Aquí es donde se asigna el rol
+          city: userData.city || '', // <-- agregado
         };
 
         setOriginalData(initialData);
@@ -95,13 +101,14 @@ function EditUserForm() {
           tempErrors[key] = 'Correo inválido';
         } else if (key === 'phone' && newValue && !/^\d{10}$/.test(newValue)) {
           tempErrors[key] = 'Teléfono debe tener 10 dígitos';
+        } else if (key === 'city' && !newValue.trim()) {
+          tempErrors[key] = 'Ingrese una ciudad';
         }
 
         payload[key] = key === 'clientId' ? Number(newValue) : newValue;
       }
     });
 
-    // Solo si se ingresó nueva contraseña
     if (formData.password.trim() !== '') {
       payload.password = formData.password;
     }
@@ -198,10 +205,12 @@ function EditUserForm() {
           <Grid item xs={12} md={4}>
             <TextField
               fullWidth
-              label="Cargo"
-              name="jobTitle"
-              value={formData.jobTitle}
+              label="Ciudad"
+              name="city"
+              value={formData.city}
               onChange={handleChange}
+              error={!!errors.city}
+              helperText={errors.city}
             />
           </Grid>
           <Grid item xs={12} md={4}>

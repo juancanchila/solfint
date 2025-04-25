@@ -1,0 +1,22 @@
+[
+    { "id": 1, "nombre": "Bogotá" },
+    { "id": 2, "nombre": "Medellín" },
+    { "id": 3, "nombre": "Cali" },
+    { "id": 4, "nombre": "Barranquilla" },
+    { "id": 5, "nombre": "Cartagena" },
+    { "id": 6, "nombre": "Cúcuta" },
+    { "id": 7, "nombre": "Bucaramanga" },
+    { "id": 8, "nombre": "Pereira" },
+    { "id": 9, "nombre": "Santa Marta" },
+    { "id": 10, "nombre": "Ibagué" },
+    { "id": 11, "nombre": "Manizales" },
+    { "id": 12, "nombre": "Pasto" },
+    { "id": 13, "nombre": "Neiva" },
+    { "id": 14, "nombre": "Villavicencio" },
+    { "id": 15, "nombre": "Armenia" },
+    { "id": 16, "nombre": "Montería" },
+    { "id": 17, "nombre": "Sincelejo" },
+    { "id": 18, "nombre": "Riohacha" },
+    { "id": 19, "nombre": "Quibdó" },
+    { "id": 20, "nombre": "Florencia" }
+  ]

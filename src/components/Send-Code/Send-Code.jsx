@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import './Send-Code.css';
 import { useNavigate } from 'react-router-dom';
-import { AuthService } from '../../services/authService'; // ajusta según tu estructura
+import { AuthService } from '../../services/authService';
 
 function SendCode() {
-  const phone = localStorage.getItem('phone') || '+573121234567'; // fallback
+  const phone = localStorage.getItem('phone') || '4567';
+  const isReset = localStorage.getItem('isreset') === 'true';
   const lastDigits = phone.slice(-4);
+
   const [code, setCode] = useState('');
   const navigate = useNavigate();
 
@@ -25,8 +27,13 @@ function SendCode() {
 
     try {
       const verified = await AuthService.verifyCode(code);
+
       if (verified) {
-        navigate('/home');
+        if (isReset) {
+          navigate('/set-password');
+        } else {
+          navigate('/home');
+        }
       } else {
         alert('Código incorrecto');
         navigate('/login');
@@ -40,7 +47,9 @@ function SendCode() {
   return (
     <div className="send-code-container">
       <div className="phone-info">
-        Código enviado al número terminado en ****{lastDigits}
+        {isReset
+          ? `Código enviado al número terminado en ****${lastDigits}`
+          : `Código enviado al número terminado en ****${phone}`}
       </div>
 
       <div className="input-code">

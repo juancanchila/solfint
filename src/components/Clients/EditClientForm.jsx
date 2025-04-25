@@ -7,9 +7,15 @@ import {
   Paper,
   Typography,
   Box,
+  Divider,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
-import ClientService from '../../services/clientService';
 import alertService from '../../services/alertService';
+import ClientService from '../../services/clientService';
+import './EditClientForm.css';
 
 function EditClientForm() {
   const navigate = useNavigate();
@@ -17,103 +23,85 @@ function EditClientForm() {
 
   const [formData, setFormData] = useState({
     name: '',
-    description: '',
+    nit: '',
+    centroDeCosto: '',
+    email: '',
     phone: '',
     address: '',
     city: '',
     department: '',
     postalCode: '',
-    email: '',
-    branchType: '',
-    logo: '',
-    employeeCount: '',
+    description: '',
+    branchType: 'sucursal',
     contact1Name: '',
     contact1Phone: '',
     contact2Name: '',
     contact2Phone: '',
+    parentClientId: '',
+    subClientLimit: 1,
+    logo: '',
+    employeeCount: '',
   });
 
-  const [originalData, setOriginalData] = useState({});
+  const [clients, setClients] = useState([]);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    const fetchClient = async () => {
+    const fetchClients = async () => {
       try {
-        const client = await ClientService.getClientById(clientId);
-
-        const initialData = {
-          name: client.name || '',
-          description: client.description || '',
-          phone: client.phone || '',
-          address: client.address || '',
-          city: client.city || '',
-          department: client.department || '',
-          postalCode: client.postalCode || '',
-          email: client.email || '',
-          branchType: client.branchType || '',
-          logo: client.logo || '',
-          employeeCount: client.employeeCount || '',
-          contact1Name: client.contact1Name || '',
-          contact1Phone: client.contact1Phone || '',
-          contact2Name: client.contact2Name || '',
-          contact2Phone: client.contact2Phone || '',
-        };
-
-        setOriginalData(initialData);
-        setFormData(initialData);
+        const res = await ClientService.getClients();
+        setClients(res);
       } catch (error) {
-        console.error('Error al cargar datos del cliente:', error);
+        console.error('Error cargando clientes:', error);
       }
     };
 
-    fetchClient();
+    const fetchClientDetails = async () => {
+      try {
+        const clientDetails = await ClientService.getClientById(clientId);
+        setFormData(clientDetails);
+      } catch (error) {
+        console.error('Error cargando detalles del cliente:', error);
+      }
+    };
+
+    fetchClients();
+    fetchClientDetails();
   }, [clientId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const validate = () => {
+    let temp = {};
+    temp.name = formData.name ? '' : 'El nombre es requerido';
+    temp.nit = formData.nit ? '' : 'El NIT es requerido';
+    temp.email = /\S+@\S+\.\S+/.test(formData.email) ? '' : 'Email inválido';
+    temp.phone = formData.phone.length === 10 ? '' : 'Teléfono debe tener 10 dígitos';
+    temp.contact1Phone = !formData.contact1Phone || formData.contact1Phone.length === 10 ? '' : 'Teléfono debe tener 10 dígitos';
+    temp.contact2Phone = !formData.contact2Phone || formData.contact2Phone.length === 10 ? '' : 'Teléfono debe tener 10 dígitos';
+    setErrors(temp);
+    return Object.values(temp).every((x) => x === '');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const payload = {};
-    const tempErrors = {};
-
-    Object.keys(originalData).forEach((key) => {
-      const newValue = formData[key];
-      const oldValue = originalData[key];
-
-      if (newValue !== oldValue) {
-        if (key === 'email' && newValue && !/\S+@\S+\.\S+/.test(newValue)) {
-          tempErrors[key] = 'Correo inválido';
-        }
-        payload[key] = newValue;
-      }
-    });
-
-    setErrors(tempErrors);
-    if (Object.keys(tempErrors).length > 0) return;
-
-    if (Object.keys(payload).length === 0) {
-      alertService.confirmAlert({
-        message: 'No se han realizado cambios',
-        type: 'info',
-      });
-      return;
-    }
+    if (!validate()) return;
 
     try {
-      await ClientService.updateClient(clientId, payload);
-
+      await ClientService.updateClient(clientId, formData);
       alertService.confirmAlert({
         message: 'Cliente actualizado exitosamente',
         type: 'success',
       });
-      navigate('/clients');
+
+      navigate(`/detail_client/${clientId}`);
     } catch (error) {
       console.error('Error al actualizar cliente:', error);
       alertService.confirmAlert({
-        message: 'Error al actualizar el cliente',
+        message: 'Error al actualizar cliente. Intente nuevamente.',
         type: 'error',
       });
     }
@@ -124,153 +112,253 @@ function EditClientForm() {
       <Typography variant="h6" gutterBottom>
         Editar Cliente
       </Typography>
-      <Box component="form" onSubmit={handleSubmit}>
+
+      <Box component="form" onSubmit={handleSubmit} noValidate>
+        <Typography variant="subtitle1" gutterBottom>
+          Información General
+        </Typography>
+        <Divider sx={{ mb: 2 }} />
+
         <Grid container spacing={2}>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Nombre"
               name="name"
+              label="Nombre"
               value={formData.name}
               onChange={handleChange}
               error={!!errors.name}
               helperText={errors.name}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Descripción"
+              name="nit"
+              label="NIT"
+              value={formData.nit}
+              onChange={handleChange}
+              error={!!errors.nit}
+              helperText={errors.nit}
+            />
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ mb: 2 }} />
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
               name="description"
+              label="Descripción"
               value={formData.description}
               onChange={handleChange}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              label="Teléfono"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              error={!!errors.phone}
-              helperText={errors.phone}
-            />
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel id="branchType-label">Tipo de Sucursal</InputLabel>
+              <Select
+                labelId="branchType-label"
+                name="branchType"
+                value={formData.branchType}
+                label="Tipo de Sucursal"
+                onChange={handleChange}
+              >
+                <MenuItem value="principal">Principal</MenuItem>
+                <MenuItem value="sucursal">Sucursal</MenuItem>
+              </Select>
+            </FormControl>
           </Grid>
-          <Grid item xs={12} md={4}>
+        </Grid>
+
+        <Divider sx={{ mb: 2 }} />
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Dirección"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              label="Ciudad"
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              label="Departamento"
-              name="department"
-              value={formData.department}
+              name="centroDeCosto"
+              label="Centro de Costo"
+              value={formData.centroDeCosto}
               onChange={handleChange}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel id="parentClientId-label">Cliente Padre</InputLabel>
+              <Select
+                labelId="parentClientId-label"
+                name="parentClientId"
+                value={formData.parentClientId}
+                onChange={handleChange}
+                label="Cliente Padre"
+              >
+                <MenuItem value="">Sin Cliente Padre</MenuItem>
+                {clients.map((client) => (
+                  <MenuItem key={client.id} value={client.id}>
+                    {client.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ mb: 2 }} />
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Código Postal"
-              name="postalCode"
-              value={formData.postalCode}
+              type="number"
+              name="subClientLimit"
+              label="Límite de Subclientes"
+              value={formData.subClientLimit}
               onChange={handleChange}
+              inputProps={{
+                min: 3,
+                max: 10,
+                step: 1,
+              }}
+              error={!!errors.subClientLimit}
+              helperText={errors.subClientLimit}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+        </Grid>
+
+        {/* Sección de Datos de Contacto */}
+        <Typography variant="subtitle1" gutterBottom sx={{ mt: 4 }}>
+          Datos de Contacto
+        </Typography>
+        <Divider sx={{ mb: 2 }} />
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Correo Electrónico"
               name="email"
+              label="Correo Electrónico"
               value={formData.email}
               onChange={handleChange}
               error={!!errors.email}
               helperText={errors.email}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Tipo de Sucursal"
-              name="branchType"
-              value={formData.branchType}
+              name="phone"
+              label="Teléfono"
+              value={formData.phone}
               onChange={handleChange}
+              error={!!errors.phone}
+              helperText={errors.phone}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Logo (URL)"
-              name="logo"
-              value={formData.logo}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              label="Número de Empleados"
-              name="employeeCount"
-              value={formData.employeeCount}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              label="Nombre del Contacto 1"
               name="contact1Name"
+              label="Nombre Contacto 1"
               value={formData.contact1Name}
               onChange={handleChange}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Teléfono del Contacto 1"
               name="contact1Phone"
+              label="Teléfono Contacto 1"
               value={formData.contact1Phone}
               onChange={handleChange}
+              error={!!errors.contact1Phone}
+              helperText={errors.contact1Phone}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Nombre del Contacto 2"
               name="contact2Name"
+              label="Nombre Contacto 2"
               value={formData.contact2Name}
               onChange={handleChange}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Teléfono del Contacto 2"
               name="contact2Phone"
+              label="Teléfono Contacto 2"
               value={formData.contact2Phone}
+              onChange={handleChange}
+              error={!!errors.contact2Phone}
+              helperText={errors.contact2Phone}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              type="number"
+              name="employeeCount"
+              label="Cantidad de Empleados"
+              value={formData.employeeCount}
+              onChange={handleChange}
+              inputProps={{ min: 0 }}
+            />
+          </Grid>
+        </Grid>
+
+        {/* Sección de Dirección */}
+        <Typography variant="subtitle1" gutterBottom sx={{ mt: 4 }}>
+          Dirección
+        </Typography>
+        <Divider sx={{ mb: 2 }} />
+
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              name="address"
+              label="Dirección"
+              value={formData.address}
               onChange={handleChange}
             />
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              name="city"
+              label="Ciudad"
+              value={formData.city}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              name="department"
+              label="Departamento"
+              value={formData.department}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              name="postalCode"
+              label="Código Postal"
+              value={formData.postalCode}
+              onChange={handleChange}
+            />
+          </Grid>
+        </Grid>
 
-          <Grid item xs={12} display="flex" justifyContent="flex-end" mt={2}>
+        <Grid container spacing={2} sx={{ mt: 4 }}>
+          <Grid item xs={12} display="flex" justifyContent="flex-end">
             <Button variant="contained" color="primary" type="submit">
-              ACTUALIZAR CLIENTE
+              Guardar Cliente
             </Button>
           </Grid>
         </Grid>

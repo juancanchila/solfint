@@ -1,0 +1,52 @@
+.queues-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+
+  .queues-table th,
+  .queues-table td {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+
+  .queues-table td {
+    font-family: monospace; /* para que se vea bien el ID */
+  }
+
+  .queues-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+
+  .pagination {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+
+  }
+
+  .pagination button {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+  }
+
+  .pagination button.active {
+    background: #007bff;
+    color: white;
+    font-weight: bold;
+  }
+
+  .card {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: white;
+  }
+
+  .card .table-filter {
+    margin-bottom: 1rem;
+  }

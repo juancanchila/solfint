@@ -54,6 +54,7 @@ export class AuthService {
 
       return response.status === 200;
     } catch (error) {
+       AuthService.logout();
       console.error('Token inválido o expirado', error);
       return false;
     }
@@ -112,6 +113,7 @@ export class AuthService {
         console.log('Almacenando');
         localStorage.setItem('auth_token', data.token);
         localStorage.setItem('userId', data.userId);
+        localStorage.setItem('phone', data.phone_last4);
         localStorage.setItem('isreset', true);
         return true;
       }else{

@@ -26,7 +26,7 @@ function AddUserForm() {
     password: '',
     telefono: '',
     whatsapp: '',
-    cargo: '',
+    ciudad:'',
     fullName: '',
     clientId: '',
     roleIds: [],
@@ -74,6 +74,7 @@ function AddUserForm() {
     temp.whatsapp = /^\d{10}$/.test(formData.whatsapp) ? '' : 'WhatsApp debe tener 10 dígitos'; // Validación para WhatsApp
     temp.roleIds = formData.roleIds.length > 0 ? '' : 'Seleccione un rol';
     temp.clientId = formData.clientId ? '' : 'Seleccione un cliente';
+    temp.ciudad = formData.ciudad ? '' : 'Ciudad requerida';
     setErrors(temp);
     return Object.values(temp).every((x) => x === '');
   };
@@ -90,7 +91,6 @@ function AddUserForm() {
         password: formData.password,
         telefono: formData.telefono,
         whatsapp: formData.whatsapp,
-        cargo: formData.cargo,
         fullName: formData.fullName,
         clientId: Number(formData.clientId),
         roleIds: formData.roleIds,
@@ -207,6 +207,17 @@ function AddUserForm() {
               onChange={handleChange}
               error={!!errors.whatsapp}
               helperText={errors.whatsapp}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              fullWidth
+              name="ciudad"
+              label="Ciudad"
+              value={formData.ciudad}
+              onChange={handleChange}
+              error={!!errors.ciudad}
+              helperText={errors.ciudad}
             />
           </Grid>
         </Grid>

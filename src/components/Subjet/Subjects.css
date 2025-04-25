@@ -1,0 +1,21 @@
+/* src/components/Subjects/Subjects.css */
+.subject-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .subject-item {
+    cursor: pointer;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+  }
+
+  .subject-item h2 {
+    margin: 0;
+  }
+
+  .subject-item p {
+    margin: 5px 0;
+  }

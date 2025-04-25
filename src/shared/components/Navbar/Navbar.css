@@ -6,7 +6,7 @@
   padding: 10px 20px;
   background-color: #333;
   color: white;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -17,10 +17,12 @@
 }
 
 .navbar.collapsed {
-  padding: 5px 20px; /* Reduce padding cuando el sidebar está abierto */
+  padding: 5px 20px;
+  /* Reduce padding cuando el sidebar está abierto */
 
 }
-.logo-container{
+
+.logo-container {
   margin-bottom: 0px;
 }
 
@@ -44,21 +46,21 @@
 
 
 .back {
-	margin-top: -11px;
-	margin-right: -30px;
+  margin-top: -13px;
+  margin-right: 0px;
 }
 
 @media (max-width: 768px) {
   .back {
-    margin-top: -11px;
-    margin-right: -30px;
+    margin-top: -13px;
+    margin-right: -15px;
   }
 
 }
 
 @media (max-width: 268px) {
   .back {
-display: node;
+    display: node;
   }
 
 }

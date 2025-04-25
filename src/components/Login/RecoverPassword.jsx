@@ -20,8 +20,9 @@ function RecoverPassword() {
 
       if (response === true) {
         alert("Código enviado a tu teléfono.");
+
         localStorage.setItem('isreset', true);
-        navigate("/set-password");
+        navigate("/send-code");
       } else {
         alert("El usuario no existe.");
       }

@@ -16,7 +16,7 @@ function Navbar({ toggleSidebar, isSidebarOpen }) {
     <nav className={`navbar ${isSidebarOpen ? 'collapsed' : ''}`}>
       <div className="logo-container">
         <img src={reactLogo} alt="React Logo" className="logo" />
-        <span>Mi Aplicación</span>
+        <span>SOLFINT</span>
       </div>
 
       <div className="navbar-actions">

@@ -43,6 +43,7 @@ const UserService = {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log(response.data,'ROles');
       return response.data;
     } catch (error) {
       console.error('Error al obtener roles:', error);

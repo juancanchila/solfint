@@ -30,7 +30,7 @@ function AddClientForm() {
     department: '',
     postalCode: '',
     description: '',
-    branchType: '飽ursal',
+    branchType: 'sucursal',
     contact1Name: '',
     contact1Phone: '',
     contact2Name: '',
@@ -83,7 +83,16 @@ function AddClientForm() {
         message: 'Cliente agregado exitosamente',
         type: 'success',
       });
-      navigate('/clients');
+
+      const created_client = localStorage.getItem('created_client') ;
+
+
+      if(created_client){
+          navigate('/clients');
+      }
+
+
+
     } catch (error) {
       console.error('Error al crear cliente:', error);
       alertService.confirmAlert({

@@ -17,7 +17,7 @@ function ClientsList() {
     const fetchClients = async () => {
       try {
         const data = await ClientService.getClients();
-        console.log(data);
+        console.log(data, 'Listado de clientes');
         setClients(data);
         const hierarchy = getHierarchicalClients(data);
         setFiltered(hierarchy);
@@ -30,7 +30,18 @@ function ClientsList() {
   }, []);
 
   const getHierarchicalClients = (list, parentId = null, level = 0, prefix = '') => {
-    const children = list.filter((client) => client.parentClientId === parentId);
+    let children;
+
+    if (parentId === null) {
+      // Obtener todos los IDs de los clientes
+      const allIds = list.map(client => client.id);
+      // Los que no tienen un parentClientId dentro del listado, son raíz
+      children = list.filter(client => !allIds.includes(client.parentClientId));
+    } else {
+      // Hijo directo
+      children = list.filter(client => client.parentClientId === parentId);
+    }
+
     let result = [];
 
     children.forEach((client, index) => {
@@ -49,6 +60,8 @@ function ClientsList() {
 
     return result;
   };
+
+
   const handleFilterChange = ({ field, value, ascending }) => {
     let hierarchy = getHierarchicalClients(clients);
 
@@ -105,9 +118,10 @@ function ClientsList() {
 
   const handleActionChange = async (e, clientId) => {
     const action = e.target.value;
-
     if (action === 'ver') {
       navigate(`/clients/${clientId}`);
+    } else if (action === 'Centros de Costo') {
+      navigate(`/clientscostcenter/${clientId}`);
     } else if (action === 'editar') {
       navigate(`/editclient/${clientId}`);
     } else if (action === 'eliminar') {
@@ -167,6 +181,7 @@ function ClientsList() {
                   <select onChange={(e) => handleActionChange(e, client.id)}>
                     <option value="">Acción</option>
                     <option value="ver">Ver</option>
+                    <option value="Centros de Costo">Centros de Costo</option>
                     <option value="editar">Editar</option>
                     <option value="eliminar">Eliminar</option>
                   </select>
