@@ -23,6 +23,36 @@ const getAuthHeaders = () => {
 };
 
 const apiService = {
+
+    // Método para enviar datos al endpoint /input
+    submitInputData: async (data) => {
+      try {
+        // Construimos el payload correctamente:
+        const payload = {
+          subjectId: data.subjectId,
+          templateId: data.examTemplateId,
+          templateInput: {
+            "PI.0001.01.Topic1": "Tema de prueba 1",
+            "PI.0001.01.Topic2": "Tema de prueba 2",
+            "R1.0001.01.FirstName": data.name,
+            "R1.0001.03.LastName": "Pérez",
+            "EyeColor": "Verde"
+          }
+        };
+
+        // Realizamos el POST con el cuerpo corregido
+        const response = await axios.post(
+          `${API_URL}/api/v1/input`,
+          payload,
+          { headers: getAuthHeaders() }
+        );
+
+        return response.data;
+      } catch (error) {
+        console.error("Error al enviar los datos al endpoint /input:", error);
+        throw error;
+      }
+    },
   // Obtener los examinados
   getSubjectList: async () => {
     try {

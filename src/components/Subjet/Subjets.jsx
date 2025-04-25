@@ -19,6 +19,7 @@ function Subjects() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [noResults, setNoResults] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [catalogList, setCatalogList] = useState([]); // Catalogo de Exámenes
   const ITEMS_PER_PAGE = 10;
 
   useEffect(() => {
@@ -33,7 +34,18 @@ function Subjects() {
         setLoading(false);
       }
     };
+
+    const fetchCatalogList = async () => {
+      try {
+        const catalog = await apiService.getCatalogList();
+        setCatalogList(catalog); // Asigna el catálogo obtenido
+      } catch (error) {
+        console.error("Error al obtener el catálogo de exámenes:", error);
+      }
+    };
+
     fetchSubjects();
+    fetchCatalogList(); // Llama para obtener los datos del catálogo de exámenes
   }, []);
 
   const handleFilterChange = ({ field, value, ascending }) => {
@@ -121,7 +133,6 @@ function Subjects() {
     try {
       const jsonSubjects = await subjectService.parseCSVFile(file);
       console.log("Sujetos extraídos del CSV:", jsonSubjects);
-      // Aquí podrías luego enviar jsonSubjects a tu API si lo deseas.
     } catch (error) {
       console.error("Error al procesar el archivo CSV:", error.message);
     }
@@ -186,7 +197,7 @@ function Subjects() {
       )}
 
       {selectedSubject && (
-        <SubjectDetailModal subject={selectedSubject} onClose={closeModal} loading={modalLoading} />
+        <SubjectDetailModal subject={selectedSubject} onClose={closeModal} loading={modalLoading} catalogList={catalogList} />
       )}
 
       {showCreateModal && (
