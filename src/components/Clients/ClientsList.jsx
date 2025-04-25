@@ -122,6 +122,8 @@ function ClientsList() {
       navigate(`/clients/${clientId}`);
     } else if (action === 'Centros de Costo') {
       navigate(`/clientscostcenter/${clientId}`);
+    }else if (action === 'Areas') {
+      navigate(`/clientscostcenter/${clientId}`);
     } else if (action === 'editar') {
       navigate(`/editclient/${clientId}`);
     } else if (action === 'eliminar') {
@@ -182,6 +184,7 @@ function ClientsList() {
                     <option value="">Acción</option>
                     <option value="ver">Ver</option>
                     <option value="Centros de Costo">Centros de Costo</option>
+                    <option value="Areas">Áreas</option>
                     <option value="editar">Editar</option>
                     <option value="eliminar">Eliminar</option>
                   </select>

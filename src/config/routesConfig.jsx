@@ -25,6 +25,8 @@ import Catalog from '../components/Catalog/Catalogs.jsx';
 import QueueList from '../components/Exams/QueueList.jsx';
 import QueueDetail from '../components/Queue/QueueDetail.jsx';
 import Translate from '../components/Translate/TranslateList.jsx';
+import AreaList from '../components/Clients/AreaList.jsx';
+
 const routes = [
   // Splash screen
   {
@@ -114,6 +116,10 @@ const routes = [
       {
         path: "/clients/:clientId",
         element: <ClientProfile />,
+      },
+      {
+        path: "/clientsarea/:clientId",
+        element: <AreaList />,
       },
       {
         path: "/clientscostcenter/:clientId",
