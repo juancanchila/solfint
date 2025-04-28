@@ -1,0 +1,32 @@
+.logs-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .logs-table th, .logs-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+
+  .logs-table th {
+    background-color: #f2f2f2;
+  }
+
+  .pagination {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .pagination button {
+    margin: 0 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+
+  .pagination button.active {
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+  }
+/*testddddd
+*/
