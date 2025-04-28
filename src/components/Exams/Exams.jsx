@@ -3,7 +3,7 @@ import Layout from "../../shared/components/Layout/Layout";
 import apiService from "../../services/apiService";
 import ExamDetailModal from "./ExamDetailModal"; // Importa el modal
 import "./Exams.css";
-
+import ErrorService from '../../services/errorService';
 function Exams() {
   const [exams, setExams] = useState([]); // Estado para almacenar los exámenes
   const [loading, setLoading] = useState(true); // Estado para manejar la carga
@@ -16,6 +16,7 @@ function Exams() {
         const data = await apiService.getExamList();
         setExams(data);
       } catch (error) {
+        ErrorService.handle(error);
         console.error("Error al obtener los exámenes:", error);
       } finally {
         setLoading(false);

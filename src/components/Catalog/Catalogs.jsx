@@ -9,6 +9,7 @@ import Dialog from "@mui/material/Dialog";
 import CircularProgress from "@mui/material/CircularProgress";
 import "./Catalogs.css";
 import translateService from "../../services/translateService";
+import ErrorService from '../../services/errorService';
 
 function Catalogs() {
   const [catalogs, setCatalogs] = useState([]);
@@ -25,6 +26,7 @@ function Catalogs() {
         setCatalogs(data);
       } catch (error) {
         console.error("Error al obtener los catálogos:", error);
+         ErrorService.handle(error);
       } finally {
         setLoading(false);
       }

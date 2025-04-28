@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import QueueService from '../../services/apiService'; // Asegúrate de tener un servicio adecuado
 import TableFilter from '../../shared/components/TableFilter/TableFilter';
 import './QueueList.css'; // Asegúrate de que el CSS esté adecuado para tu tabla
-
+import ErrorService from '../../services/errorService';
 function QueueList() {
   const [queues, setQueues] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -21,7 +21,9 @@ function QueueList() {
         setQueues(data);
         setFiltered(data);
       } catch (error) {
+
         console.error('Error al cargar colas:', error);
+        ErrorService.handle(error);
       }
     };
 

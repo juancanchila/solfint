@@ -4,7 +4,7 @@ import ClientService from '../../services/clientService';
 import TableFilter from '../../shared/components/TableFilter/TableFilter';
 import './ClientsList.css';
 import Layout from '../../shared/components/Layout/Layout';
-
+import ErrorService from '../../services/errorService';
 function AreaList() {
   const { clientId } = useParams();  // Obtén el clientId de la URL
   const [centers, setCenters] = useState([]);
@@ -23,6 +23,7 @@ function AreaList() {
           setFiltered(data);
         }
       } catch (error) {
+        ErrorService.handle(error);
         console.error('Error al cargar Área:', error);
       }
     };

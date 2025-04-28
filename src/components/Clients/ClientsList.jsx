@@ -4,7 +4,7 @@ import ClientService from "../../services/clientService";
 import TableFilter from "../../shared/components/TableFilter/TableFilter";
 import "./ClientsList.css";
 import Swal from "sweetalert2";
-
+import ErrorService from '../../services/errorService';
 
 function ClientsList() {
   const [clients, setClients] = useState([]);
@@ -24,6 +24,7 @@ function ClientsList() {
         const hierarchy = getHierarchicalClients(data);
         setFiltered(hierarchy);
       } catch (error) {
+        ErrorService.handle(error);
         console.error("Error al cargar clientes:", error);
       }
     };

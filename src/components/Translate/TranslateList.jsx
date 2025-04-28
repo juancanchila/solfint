@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import translateService from "../../services/translateService";
 import Translate from "./Translate";
 import Layout from '../../shared/components/Layout/Layout';
+import ErrorService from '../../services/errorService';
 import {
   Box,
   Typography,
@@ -36,6 +37,7 @@ function TranslateList() {
       console.log(data);
       setTranslations(data);
     } catch (error) {
+      ErrorService.handle(error);
       console.error(error);
     } finally {
       setLoading(false);

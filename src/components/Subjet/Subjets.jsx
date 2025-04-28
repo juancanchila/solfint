@@ -9,6 +9,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import TableFilter from "../../shared/components/TableFilter/TableFilter";
 import "./Subjects.css";
+import ErrorService from '../../services/errorService';
 
 function Subjects() {
   const [subjects, setSubjects] = useState([]);
@@ -29,7 +30,9 @@ function Subjects() {
         setSubjects(data);
         setFilteredSubjects(data);
       } catch (error) {
+
         console.error("Error al obtener los sujetos:", error);
+        ErrorService.handle(error);
       } finally {
         setLoading(false);
       }

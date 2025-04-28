@@ -11,6 +11,8 @@ class ErrorService {
     // Redirigir al login si es un error de autenticación (401 o 403)
     if (error.response?.status === 401 || error.response?.status === 403) {
       alert('Ocurrió un error. Será redirigido al login.');
+
+    localStorage.clear();
       window.location.href = '/login';
     }
   }

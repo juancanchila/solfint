@@ -4,6 +4,8 @@ import Layout from "../../shared/components/Layout/Layout";
 import UserService from "../../services/userService";
 import "./Profile.css";
 import UserPIc from "../../assets/user.svg";
+
+import ErrorService from '../../services/errorService';
 function Profile() {
   const { userId: userIdParam } = useParams();
   const [user, setUser] = useState(null);
@@ -22,7 +24,9 @@ function Profile() {
         const userData = await UserService.getUserById(userId);
         setUser(userData);
       } catch (error) {
+
         console.error("Error al obtener el perfil:", error);
+        ErrorService.handle(error);
         setRedirectToLogin(true);
       }
     };

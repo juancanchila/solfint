@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import UserService from '../../services/userService';
 import TableFilter from '../../shared/components/TableFilter/TableFilter';
 import './UsersList.css';
+import ErrorService from '../../services/errorService';
 
 function UsersList() {
   const [users, setUsers] = useState([]);
@@ -21,6 +22,7 @@ function UsersList() {
         setUsers(data);
         setFiltered(data);
       } catch (error) {
+        ErrorService.handle(error);
         console.error('Error al cargar usuarios:', error);
       }
     };

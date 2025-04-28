@@ -4,7 +4,7 @@ import ClientService from '../../services/clientService';
 import TableFilter from '../../shared/components/TableFilter/TableFilter';
 import Layout from '../../shared/components/Layout/Layout';
 import './ClientsList.css';
-
+import ErrorService from '../../services/errorService';
 function CostCentersList() {
   const { clientId } = useParams();
   const [centers, setCenters] = useState([]);
@@ -23,6 +23,7 @@ function CostCentersList() {
           setFiltered(data);
         }
       } catch (error) {
+        ErrorService.handle(error);
         console.error('Error al cargar centros de costo:', error);
       }
     };

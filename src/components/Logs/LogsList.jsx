@@ -4,6 +4,8 @@ import LogService from '../../services/apiService';
 import TableFilter from '../../shared/components/TableFilter/TableFilter';
 import './LogsList.css'; // Crea este CSS si quieres estilos
 import Layout from '../../shared/components/Layout/Layout';
+import ErrorService from '../../services/errorService';
+
 function LogsList() {
   const [logs, setLogs] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -21,6 +23,7 @@ function LogsList() {
         setLogs(logsData);
         setFiltered(logsData);
       } catch (error) {
+        ErrorService.handle(error);
         console.error('Error al cargar logs:', error);
       }
     };

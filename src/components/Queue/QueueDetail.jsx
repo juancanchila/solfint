@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import apiService from "../../services/apiService";
 import "./QueueDetail.css";
 import Layout from '../../shared/components/Layout/Layout';
+import ErrorService from '../../services/errorService';
 function QueueDetail() {
   const { examId } = useParams();
   const [exam, setExam] = useState(null);
@@ -18,6 +19,7 @@ function QueueDetail() {
         const subjectData = await apiService.getSubjetDetail(examData.subjectId);
         setSubject(subjectData);
       } catch (error) {
+        ErrorService.handle(error);
         console.error("Error al cargar los datos:", error);
       } finally {
         setLoading(false);
