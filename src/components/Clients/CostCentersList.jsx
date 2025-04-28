@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';  // Importa useParams para extraer los parámetros de la URL
+import { useParams } from 'react-router-dom';
 import ClientService from '../../services/clientService';
 import TableFilter from '../../shared/components/TableFilter/TableFilter';
-import './ClientsList.css';
 import Layout from '../../shared/components/Layout/Layout';
+import './ClientsList.css';
 
 function CostCentersList() {
-  const { clientId } = useParams();  // Obtén el clientId de la URL
+  const { clientId } = useParams();
   const [centers, setCenters] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,7 +23,7 @@ function CostCentersList() {
           setFiltered(data);
         }
       } catch (error) {
-        console.error('Error al cargar centros de costos:', error);
+        console.error('Error al cargar centros de costo:', error);
       }
     };
 
@@ -59,14 +59,14 @@ function CostCentersList() {
     if (!confirmed) return;
 
     try {
-      await ClientService.deleteItem(id);
+      await ClientService.deleteCostCenter(clientId, id);
       const updated = centers.filter((c) => c.id !== id);
       setCenters(updated);
       setFiltered(updated);
-      alert('Eliminado correctamente');
+      alert('Centro de costo eliminado correctamente');
     } catch (error) {
-      console.error('Error al eliminar:', error);
-      alert('No se pudo eliminar');
+      console.error('Error al eliminar centro de costo:', error);
+      alert('No se pudo eliminar el centro de costo');
     }
   };
 
@@ -82,10 +82,28 @@ function CostCentersList() {
       const data = await ClientService.getCostCenters(clientId);
       setCenters(data);
       setFiltered(data);
-      alert('Centro de costo agregado');
+      alert('Centro de costo agregado correctamente');
     } catch (error) {
-      console.error('Error al agregar:', error);
-      alert('No se pudo agregar');
+      console.error('Error al agregar centro de costo:', error);
+      alert('No se pudo agregar el centro de costo');
+    }
+  };
+
+  const handleEdit = async (id, currentDescription) => {
+    const newDescription = prompt('Nuevo nombre del centro de costo:', currentDescription);
+    if (!newDescription || newDescription.trim() === '') return;
+
+    try {
+      await ClientService.updateCostCenter(clientId, id, {
+        description: newDescription,
+      });
+      const data = await ClientService.getCostCenters(clientId);
+      setCenters(data);
+      setFiltered(data);
+      alert('Centro de costo actualizado correctamente');
+    } catch (error) {
+      console.error('Error al actualizar centro de costo:', error);
+      alert('No se pudo actualizar el centro de costo');
     }
   };
 
@@ -124,7 +142,8 @@ function CostCentersList() {
                   <td>{center.id}</td>
                   <td>{center.description}</td>
                   <td>
-                    <button onClick={() => handleDelete(center.id)}>🗑️ Eliminar</button>
+                    <button onClick={() => handleEdit(center.id, center.description)}>✏️</button>{' '}
+                    <button onClick={() => handleDelete(center.id)}>🗑️ </button>
                   </td>
                 </tr>
               ))

@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_URL = 'http://161.35.233.204:3000';
 const CLIENTS_ENDPOINT = '/api/v1/clients';
 const COSST_ENDPOINT = '/api/v1/cost';
-
+const AREAS_ENDPOINT = '/api/v1/areas';
 const getAuthHeaders = () => {
   const token = localStorage.getItem('auth_token');
   return {
@@ -88,9 +88,9 @@ const ClientService = {
   },
 
   // ---------- ÁREAS ----------
-  getAreas: async (clienteId) => {
+  getAreas: async (clientId) => {
     try {
-      const res = await axios.get(`${API_URL}/api/v1/areas/${clienteId}`, {
+      const res = await axios.get(`${API_URL}${AREAS_ENDPOINT}/${clientId}`, {
         headers: getAuthHeaders(),  // Se asume que esta función te devuelve los headers necesarios para autenticación
       });
       return res.data;
@@ -102,7 +102,7 @@ const ClientService = {
 
   addArea: async (clientId, areaData) => {
     try {
-      const res = await axios.post(`${API_URL}${CLIENTS_ENDPOINT}/${clientId}/areas`, areaData, {
+      const res = await axios.post(`${API_URL}${AREAS_ENDPOINT}/${clientId}`, areaData, {
         headers: getAuthHeaders(),
       });
       return res.data;
@@ -114,7 +114,7 @@ const ClientService = {
 
   updateArea: async (clientId, areaId, areaData) => {
     try {
-      const res = await axios.put(`${API_URL}${CLIENTS_ENDPOINT}/${clientId}/areas/${areaId}`, areaData, {
+      const res = await axios.put(`${API_URL}${AREAS_ENDPOINT}/${clientId}/${areaId}`, areaData, {
         headers: getAuthHeaders(),
       });
       return res.data;
@@ -126,7 +126,7 @@ const ClientService = {
 
   deleteArea: async (clientId, areaId) => {
     try {
-      const res = await axios.delete(`${API_URL}${CLIENTS_ENDPOINT}/${clientId}/areas/${areaId}`, {
+      const res = await axios.delete(`${API_URL}${AREAS_ENDPOINT}/${clientId}/${areaId}`, {
         headers: getAuthHeaders(),
       });
       return res.data;
@@ -212,7 +212,7 @@ const ClientService = {
 
   updateCostCenter: async (clientId, costId, data) => {
     try {
-      const res = await axios.put(`${API_URL}${CLIENTS_ENDPOINT}/${clientId}/costos/${costId}`, data, {
+      const res = await axios.put(`${API_URL}${COSST_ENDPOINT}/${clientId}/${costId}`, data, {
         headers: getAuthHeaders(),
       });
       return res.data;
@@ -224,7 +224,7 @@ const ClientService = {
 
   deleteCostCenter: async (clientId, costId) => {
     try {
-      const res = await axios.delete(`${API_URL}${CLIENTS_ENDPOINT}/${clientId}/costos/${costId}`, {
+      const res = await axios.delete(`${API_URL}${COSST_ENDPOINT}/${clientId}/${costId}`, {
         headers: getAuthHeaders(),
       });
       return res.data;

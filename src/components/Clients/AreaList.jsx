@@ -18,7 +18,7 @@ function AreaList() {
     const fetchCenters = async () => {
       try {
         if (clientId) {
-          const data = await ClientService.getCostCenters(clientId);
+          const data = await ClientService.getAreas(clientId);
           setCenters(data);
           setFiltered(data);
         }
@@ -53,13 +53,30 @@ function AreaList() {
     setCurrentPage(1);
     setNoResults(result.length === 0);
   };
+  const handleEdit = async (id, currentDescription) => {
+    const newDescription = prompt('Nuevo nombre para el Área:', currentDescription);
+    if (!newDescription || newDescription.trim() === '') return;
+
+    try {
+      await ClientService.updateArea(clientId, id, {
+        description: newDescription,
+      });
+      const data = await ClientService.getAreas(clientId);
+      setCenters(data);
+      setFiltered(data);
+      alert('Área actualizada');
+    } catch (error) {
+      console.error('Error al actualizar:', error);
+      alert('No se pudo actualizar');
+    }
+  };
 
   const handleDelete = async (id) => {
     const confirmed = window.confirm('¿Eliminar esta Area?');
     if (!confirmed) return;
 
     try {
-      await ClientService.deleteItem(id);
+      await ClientService.deleteArea(clientId,id);
       const updated = centers.filter((c) => c.id !== id);
       setCenters(updated);
       setFiltered(updated);
@@ -75,11 +92,11 @@ function AreaList() {
     if (!description) return;
 
     try {
-      await ClientService.addCostCenter(clientId, {
+      await ClientService.addArea(clientId, {
         description,
         amount: 0,
       });
-      const data = await ClientService.getCostCenters(clientId);
+      const data = await ClientService.getAreas(clientId);
       setCenters(data);
       setFiltered(data);
       alert('Area agregada');
@@ -124,7 +141,8 @@ function AreaList() {
                   <td>{center.id}</td>
                   <td>{center.description}</td>
                   <td>
-                    <button onClick={() => handleDelete(center.id)}>🗑️ Eliminar</button>
+                    <button onClick={() => handleEdit(center.id, center.description)}>✏️</button>{' '}
+                    <button onClick={() => handleDelete(center.id)}>🗑️</button>
                   </td>
                 </tr>
               ))
