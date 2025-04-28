@@ -21,12 +21,12 @@ import RecoverPassword from "../components/Login/RecoverPassword.jsx";
 import SetPassword from "../components/Login/SetPassword.jsx";
 import ResetRoute from "../components/ResetRoute.jsx";
 import ClientDetailManagerPage from "../components/Clients/ClientDetailManagerPage.jsx";
-import Catalog from '../components/Catalog/Catalogs.jsx';
-import QueueList from '../components/Exams/QueueList.jsx';
-import QueueDetail from '../components/Queue/QueueDetail.jsx';
-import Translate from '../components/Translate/TranslateList.jsx';
-import AreaList from '../components/Clients/AreaList.jsx';
-
+import Catalog from "../components/Catalog/Catalogs.jsx";
+import QueueList from "../components/Exams/QueueList.jsx";
+import QueueDetail from "../components/Queue/QueueDetail.jsx";
+import Translate from "../components/Translate/TranslateList.jsx";
+import AreaList from "../components/Clients/AreaList.jsx";
+import LogsList from "../components/Logs/LogsList.jsx";
 const routes = [
   // Splash screen
   {
@@ -77,13 +77,14 @@ const routes = [
         path: "/home",
         element: <Home />,
       },
-
+      {
+        path: "/logs",
+        element: <LogsList />,
+      },
       {
         path: "/translate",
         element: <Translate />,
       },
-
-
       {
         path: "/exams",
         element: <Exams />,

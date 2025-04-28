@@ -10,7 +10,8 @@ function Sidebar({ isOpen, toggleSidebar }) {
   const userRole = localStorage.getItem("role");
   const userId = localStorage.getItem("userId"); // 👈 obtenemos userId
 
-  const isAdmin = userRole === "Admin" || userRole === "Super Admin";
+  const isAdmin = userRole === "Admin" || userRole === "Super Admin" || userRole === "View";
+  const isEvaluator = userRole === "Admin" || userRole === "Super Admin" || userRole === "Evaluador";
 
   const handleLogout = () => {
     Swal.fire({
@@ -95,7 +96,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
         )}
 
 
-        {isAdmin && (
+        {isEvaluator && (
           <li className="sidebar-item-with-submenu">
             <button className="logout-btn dropdown-toggle">
               Exámenes <FaChevronDown />
@@ -145,7 +146,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
             <ul className="sidebar-submenu always-open">
               <li>
                 <button
-                  onClick={() => navigate("/users")}
+                  onClick={() => navigate("/logs")}
                   className="logout-btn"
                 >
                   Logs

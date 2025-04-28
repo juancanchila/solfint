@@ -4,6 +4,7 @@ import ExamID from "../models/ExamID";
 import Subject from "../models/Subject";
 import Catalog from "../models/Catalog";
 import QueueModel from "../models/QueueModel";
+import Log from "../models/Log";
 
 const API_URL = "http://161.35.233.204:3000";
 const EXAMS_ENDPOINT = "/api/v1/exams";
@@ -13,7 +14,7 @@ const EXAM_ANSWERS_ENDPOINT = "/api/v1/exams/answers";
 const EXAMS_TEMPLATE_ENDPOINT = "/api/v1/exams/template";
 const EXAM_DETAILS_ENDPOINT = "/api/v1/exams/answerDetails";
 const EXAM_QUESTIONS_ENDPOINT = "/api/v1/exams/questions";
-
+const LOGS_ENDPOINT = "/api/v1/logs";
 const getAuthHeaders = () => {
   const token = localStorage.getItem("auth_token");
   return {
@@ -197,6 +198,22 @@ const apiService = {
         "Error al obtener detalles de las respuestas del examen:",
         error
       );
+      throw error;
+    }
+  },
+
+  getLogs : async () => {
+    try {
+      const response = await axios.get(`${API_URL}${LOGS_ENDPOINT}`, {
+        headers: getAuthHeaders(),
+      });
+      // Mapear la respuesta a instancias de Exam
+      console.log(response.data);
+      const exams = response.data.map((LogData) => new Log(LogData));
+      return exams; // Retorna los exámenes mapeados al modelo
+
+    } catch (error) {
+      console.error("Error al obtener la cola de exámenes:", error);
       throw error;
     }
   },

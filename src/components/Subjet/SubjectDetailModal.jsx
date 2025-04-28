@@ -26,6 +26,7 @@ const SubjectDetailModal = ({ subject, onClose, catalogList }) => {
 
       try {
         await apiService.submitInputData(data);
+        alert("Examen asignado correctamente.");
         console.log("Examen asignado correctamente.");
         onClose(); // Cierra el modal después de asignar
       } catch (error) {

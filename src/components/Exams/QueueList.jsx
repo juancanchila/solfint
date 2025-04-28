@@ -86,7 +86,7 @@ function QueueList() {
       const confirmed = window.confirm('¿Estás seguro de eliminar esta cola? Esta acción no se puede revertir.');
       if (confirmed) {
         try {
-          await QueueService.deleteQueue(queueId); // Aquí deberías eliminar la cola con un servicio adecuado
+          await QueueService.deleteExamFromQueue(queueId); // Aquí deberías eliminar la cola con un servicio adecuado
           alert('Cola eliminada correctamente');
           setQueues((prev) => prev.filter((queue) => queue.examId !== queueId));
           setFiltered((prev) => prev.filter((queue) => queue.examId !== queueId));
@@ -135,7 +135,8 @@ function QueueList() {
                 <td>
                   <select onChange={(e) => handleActionChange(e, queue.examId)}>
                     <option value="">Acción</option>
-                    <option value="ver">Ver</option>
+                    <option value="ver" >Ver</option>
+                    <option value="eliminar" disabled>Eliminar</option>
                   </select>
                 </td>
               </tr>
