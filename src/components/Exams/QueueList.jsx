@@ -23,7 +23,7 @@ function QueueList() {
       } catch (error) {
 
         console.error('Error al cargar colas:', error);
-        ErrorService.handle(error);
+
       }
     };
 
