@@ -122,10 +122,15 @@ function UsersList() {
 
   return (
     <div className="card">
-    <TableFilter
-        fields={['id', 'fullName', 'email','createdAt']}
-        onFilter={handleFilterChange}
-      />
+  <TableFilter
+  fields={[
+    { field: 'id', label: 'ID' },
+    { field: 'fullName', label: 'Nombre Completo' },
+    { field: 'email', label: 'Correo Electrónico' },
+    { field: 'createdAt', label: 'Fecha de Creación' }
+  ]}
+  onFilter={handleFilterChange}
+/>
 
       <table className="clients-table">
         <thead>

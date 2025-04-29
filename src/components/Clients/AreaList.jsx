@@ -119,7 +119,13 @@ function AreaList() {
           <button onClick={handleAdd}>➕ Agregar Area</button>
         </div>
 
-        <TableFilter fields={['id', 'description']} onFilter={handleFilterChange} />
+        <TableFilter
+          fields={[
+            { field: 'id', label: 'ID del Área' },
+            { field: 'description', label: 'Descripción' },
+          ]}
+          onFilter={handleFilterChange}
+        />
 
         <table className="clients-table">
           <thead>

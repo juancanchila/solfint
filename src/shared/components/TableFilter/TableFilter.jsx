@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 function TableFilter({ fields, onFilter }) {
-  const [filterField, setFilterField] = useState(fields[0]);
+  const [filterField, setFilterField] = useState(fields[0].field);
   const [filterValue, setFilterValue] = useState('');
   const [sortAsc, setSortAsc] = useState(true);
 
@@ -22,9 +22,9 @@ function TableFilter({ fields, onFilter }) {
         onChange={(e) => setFilterValue(e.target.value)}
       />
       <select value={filterField} onChange={(e) => setFilterField(e.target.value)}>
-        {fields.map((field) => (
+        {fields.map(({ field, label }) => (
           <option key={field} value={field}>
-            {field.toUpperCase()}
+            {label}
           </option>
         ))}
       </select>

@@ -94,9 +94,13 @@ function LogsList() {
       <h2>Lista de Logs</h2>
 
       <TableFilter
-        fields={['id', 'summary', 'createdAt']}
-        onFilter={handleFilterChange}
-      />
+  fields={[
+    { field: 'id', label: 'ID' },
+    { field: 'summary', label: 'Resumen' },
+    { field: 'createdAt', label: 'Fecha de Creación' }
+  ]}
+  onFilter={handleFilterChange}
+/>
 
       <table className="logs-table">
         <thead>

@@ -105,10 +105,15 @@ function QueueList() {
   return (
     <div className="card">
        <h2> Exámenes Preparados</h2>
-      <TableFilter
-        fields={['examId', 'customerId', 'examLocale', 'examQueued']}
-        onFilter={handleFilterChange}
-      />
+       <TableFilter
+  fields={[
+    { field: 'examId', label: 'ID del Examen' },
+    { field: 'customerId', label: 'ID del Cliente' },
+    { field: 'examLocale', label: 'Ubicación del Examen' },
+    { field: 'examQueued', label: 'Estado de la Cola' }
+  ]}
+  onFilter={handleFilterChange}
+/>
 
       <table className="queues-table">
         <thead>

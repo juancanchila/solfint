@@ -12,6 +12,15 @@ import "./Subjects.css";
 import ErrorService from '../../services/errorService';
 
 function Subjects() {
+  const fields = [
+    { field: "subjectId", label: "ID del Sujeto" },
+    { field: "subjectName", label: "Nombre del Sujeto" },
+    { field: "subjectEmail", label: "Correo Electrónico" },
+    { field: "subjectMobile", label: "Teléfono Móvil" },
+    { field: "subjectToken", label: "Token de Autenticación" },
+    { field: "subjectCreated", label: "Fecha de Creación" }
+  ];
+
   const [subjects, setSubjects] = useState([]);
   const [filteredSubjects, setFilteredSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -164,10 +173,7 @@ function Subjects() {
       <hr />
       <h3>Listado de Evaluados</h3>
 
-      <TableFilter
-        fields={["subjectId", "subjectName", "subjectEmail", "subjectMobile", "subjectToken", "subjectCreated"]}
-        onFilter={handleFilterChange}
-      />
+      <TableFilter fields={fields} onFilter={handleFilterChange} />
 
       {loading ? (
         <p>Cargando Evaluados...</p>

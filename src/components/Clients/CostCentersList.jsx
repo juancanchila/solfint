@@ -120,7 +120,13 @@ function CostCentersList() {
           <button onClick={handleAdd}>➕ Agregar Centro de Costo</button>
         </div>
 
-        <TableFilter fields={['id', 'description']} onFilter={handleFilterChange} />
+        <TableFilter
+  fields={[
+    { field: 'id', label: 'ID del Área' },
+    { field: 'description', label: 'Descripción del Área' }
+  ]}
+  onFilter={handleFilterChange}
+/>
 
         <table className="clients-table">
           <thead>

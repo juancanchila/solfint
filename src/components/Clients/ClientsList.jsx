@@ -169,11 +169,14 @@ function ClientsList() {
 
   return (
     <div className="card">
-      <TableFilter
-        fields={["id", "name", "createdAt"]}
-        onFilter={handleFilterChange}
-      />
-
+    <TableFilter
+    fields={[
+      { field: "id", label: "ID" },
+      { field: "name", label: "Nombre" },
+      { field: "createdAt", label: "Fecha de Creación" },
+    ]}
+    onFilter={handleFilterChange}
+  />
       <table className="clients-table">
         <thead>
           <tr>
