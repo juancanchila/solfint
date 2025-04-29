@@ -4,6 +4,8 @@ const API_URL = 'http://161.35.233.204:3000';
 const CLIENTS_ENDPOINT = '/api/v1/clients';
 const COSST_ENDPOINT = '/api/v1/cost';
 const AREAS_ENDPOINT = '/api/v1/areas';
+const LICENCE_ENDPOINT = '/api/v1/licenses';
+
 const getAuthHeaders = () => {
   const token = localStorage.getItem('auth_token');
   return {
@@ -137,9 +139,9 @@ const ClientService = {
   },
 
   // ---------- LICENCIAS ----------
-  getLicencias: async (clientId) => {
+  getLicenses: async (clientId) => {
     try {
-      const res = await axios.get(`${API_URL}${CLIENTS_ENDPOINT}/${clientId}/licencias`, {
+      const res = await axios.get(`${API_URL}${LICENCE_ENDPOINT}/${clientId}`, {
         headers: getAuthHeaders(),
       });
       return res.data;

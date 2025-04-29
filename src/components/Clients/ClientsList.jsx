@@ -4,7 +4,7 @@ import ClientService from "../../services/clientService";
 import TableFilter from "../../shared/components/TableFilter/TableFilter";
 import "./ClientsList.css";
 import Swal from "sweetalert2";
-import ErrorService from '../../services/errorService';
+import ErrorService from "../../services/errorService";
 
 function ClientsList() {
   const [clients, setClients] = useState([]);
@@ -12,6 +12,7 @@ function ClientsList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [noResults, setNoResults] = useState(false);
   const navigate = useNavigate();
+  const role = localStorage.getItem("role"); // Obtenemos el valor del role desde localStorage
 
   const ITEMS_PER_PAGE = 10;
 
@@ -21,6 +22,21 @@ function ClientsList() {
         const data = await ClientService.getClients();
         console.log(data, "Listado de clientes");
         setClients(data);
+
+        // Si el rol es "Super Admin", aseguramos que el cliente SOLFINT esté incluido
+        if (role === "Super Admin") {
+          const solfintClient = data.find(client => client.name === "SOLFINT");
+          if (!solfintClient) {
+            // Si el cliente SOLFINT no está en la lista, lo agregamos
+            data.push({
+              id: 1, // Usamos el ID que debe tener SOLFINT
+              name: "SOLFINT",
+              parentClientId: null,
+              createdAt: new Date(),
+            });
+          }
+        }
+
         const hierarchy = getHierarchicalClients(data);
         setFiltered(hierarchy);
       } catch (error) {
@@ -30,7 +46,7 @@ function ClientsList() {
     };
 
     fetchClients();
-  }, []);
+  }, [role]); // Dependemos del valor del role para que se actualice cuando cambie
 
   const getHierarchicalClients = (
     list,
@@ -41,14 +57,11 @@ function ClientsList() {
     let children;
 
     if (parentId === null) {
-      // Obtener todos los IDs de los clientes
       const allIds = list.map((client) => client.id);
-      // Los que no tienen un parentClientId dentro del listado, son raíz
       children = list.filter(
         (client) => !allIds.includes(client.parentClientId)
       );
     } else {
-      // Hijo directo
       children = list.filter((client) => client.parentClientId === parentId);
     }
 
@@ -76,7 +89,6 @@ function ClientsList() {
   const handleFilterChange = ({ field, value, ascending }) => {
     let hierarchy = getHierarchicalClients(clients);
 
-    // Filtrado por valor
     if (value.trim() !== "") {
       hierarchy = hierarchy.filter((client) => {
         const clientValue = client[field];
@@ -88,7 +100,6 @@ function ClientsList() {
       });
     }
 
-    // Ordenación de acuerdo al campo seleccionado
     hierarchy.sort((a, b) => {
       const aVal = a[field];
       const bVal = b[field];
@@ -97,13 +108,8 @@ function ClientsList() {
         const timestampA = new Date(aVal).getTime();
         const timestampB = new Date(bVal).getTime();
 
-        // Agrega un log para ver los valores antes de comparar
-        console.log("Comparando fechas:", aVal, bVal);
-        console.log("Timestamp A:", timestampA, "Timestamp B:", timestampB);
-
         if (isNaN(timestampA) || isNaN(timestampB)) {
-          console.error("Fecha inválida", aVal, bVal);
-          return 0; // Si las fechas son inválidas, no ordenamos
+          return 0;
         }
 
         return ascending ? timestampA - timestampB : timestampB - timestampA;
@@ -126,13 +132,7 @@ function ClientsList() {
     if (action === "ver") {
       navigate(`/clients/${clientId}`);
     } else if (action === "Licencias") {
-      Swal.fire({
-        icon: 'info',
-        title: 'No hay datos para gestionar licencias',
-        text: 'No hay información disponible para gestionar licencias en este momento.',
-        confirmButtonText: 'Aceptar',
-      });
-      console.log('No hay licencias');
+      navigate(`/licence/${clientId}`);
     } else if (action === "Centros de Costo") {
       navigate(`/clientscostcenter/${clientId}`);
     } else if (action === "Areas") {
@@ -169,14 +169,14 @@ function ClientsList() {
 
   return (
     <div className="card">
-    <TableFilter
-    fields={[
-      { field: "id", label: "ID" },
-      { field: "name", label: "Nombre" },
-      { field: "createdAt", label: "Fecha de Creación" },
-    ]}
-    onFilter={handleFilterChange}
-  />
+      <TableFilter
+        fields={[
+          { field: "id", label: "ID" },
+          { field: "name", label: "Nombre" },
+          { field: "createdAt", label: "Fecha de Creación" },
+        ]}
+        onFilter={handleFilterChange}
+      />
       <table className="clients-table">
         <thead>
           <tr>
