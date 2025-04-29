@@ -5,7 +5,9 @@ import TableFilter from '../../shared/components/TableFilter/TableFilter';
 import Layout from '../../shared/components/Layout/Layout';
 import ErrorService from '../../services/errorService';
 import './LicenseList.css';
-
+/**
+ * Update
+ */
 function LicenseList() {
   const { clientId } = useParams();
   const [licenses, setLicenses] = useState([]);
