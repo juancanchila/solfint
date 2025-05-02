@@ -12,7 +12,7 @@ import {
 import UserService from '../../services/userService';
 import ClientService from '../../services/clientService';
 import alertService from '../../services/alertService';
-
+import ErrorService from '../../services/errorService';
 function EditUserForm() {
   const navigate = useNavigate();
   const { userId } = useParams();
@@ -26,7 +26,7 @@ function EditUserForm() {
     jobTitle: '',
     fullName: '',
     clientId: '',
-    roleIds: [], // El array de roles
+    roleIds: '', // El array de roles
     city: '', // <-- agregado
   });
 
@@ -134,6 +134,7 @@ function EditUserForm() {
       navigate('/users');
     } catch (error) {
       console.log(error);
+        ErrorService.handle(error);
       alertService.confirmAlert({
         message: `Error al actualizar el usuario`,
         type: 'error',
@@ -255,7 +256,7 @@ function EditUserForm() {
               error={!!errors.clientId}
               helperText={errors.clientId}
             >
-              <MenuItem value="">Seleccione un cliente</MenuItem>
+              <MenuItem value={1}>Sin cliente Padre</MenuItem>
               {clients.map((client) => (
                 <MenuItem key={client.id} value={client.id}>
                   {client.name}
