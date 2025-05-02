@@ -72,16 +72,18 @@ function AddUserForm() {
     temp.password = formData.password.length >= 6 ? '' : 'Mínimo 6 caracteres';
     temp.telefono = /^\d{10}$/.test(formData.telefono) ? '' : 'Teléfono debe tener 10 dígitos';
     temp.whatsapp = /^\d{10}$/.test(formData.whatsapp) ? '' : 'WhatsApp debe tener 10 dígitos'; // Validación para WhatsApp
-    temp.roleIds = formData.roleIds.length > 0 ? '' : 'Seleccione un rol';
-    temp.clientId = formData.clientId ? '' : 'Seleccione un cliente';
+    temp.roleIds = formData.roleIds ? '' : 'Seleccione un rol';
+    temp.clientId = formData.clientId ? '': 1;
     temp.ciudad = formData.ciudad ? '' : 'Ciudad requerida';
     setErrors(temp);
     return Object.values(temp).every((x) => x === '');
   };
 
   const handleSubmit = async (e) => {
+
     e.preventDefault();
 
+    console.log(validate());
     if (!validate()) return;
 
     try {
@@ -250,18 +252,21 @@ function AddUserForm() {
             <FormControl fullWidth>
               <InputLabel id="clientId-label">Cliente</InputLabel>
               <Select
-                labelId="clientId-label"
-                name="clientId"
-                value={formData.clientId}
-                onChange={handleChange}
-                label="Cliente"
-              >
-                {clients.map((client) => (
-                  <MenuItem key={client.id} value={client.id}>
-                    {client.name}
-                  </MenuItem>
-                ))}
-              </Select>
+  labelId="clientId-label"
+  name="clientId"
+  value={formData.clientId}
+  onChange={handleChange}
+  label="Cliente"
+>
+  <MenuItem value="1">Sin cliente padre</MenuItem>  {/* Opción con valor '1' */}
+
+  {clients.map((client) => (
+    <MenuItem key={client.id} value={client.id}>
+      {client.name}
+    </MenuItem>
+  ))}
+</Select>
+
             </FormControl>
           </Grid>
         </Grid>
