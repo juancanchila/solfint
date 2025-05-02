@@ -29,7 +29,7 @@ function AddUserForm() {
     ciudad:'',
     fullName: '',
     clientId: '',
-    roleIds: [],
+    roleIds:  '',
   });
 
   const [errors, setErrors] = useState({});
