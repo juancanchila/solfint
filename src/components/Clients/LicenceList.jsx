@@ -236,12 +236,7 @@ function LicenseList() {
                   <td>{new Date(license.startDate).toLocaleDateString()}</td>
                   <td>{new Date(license.expiryDate).toLocaleDateString()}</td>
                   <td>
-                    <button
-                      onClick={() => handleEdit(license.id, license.licenseCount, license.startDate, license.expiryDate)}
-                    >
-                      ✏️
-                    </button>{' '}
-                    <button onClick={() => handleDelete(license.id)}>🗑️</button>{' '}
+                          <button onClick={() => handleDelete(license.id)}>🗑️</button>{' '}
                     <button onClick={() => handleOpenAssignModal(license)}>📤 Asignar</button>
                   </td>
                 </tr>
