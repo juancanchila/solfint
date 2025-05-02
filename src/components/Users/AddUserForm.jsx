@@ -231,7 +231,7 @@ function AddUserForm() {
               <InputLabel id="roleIds-label">Roles</InputLabel>
               <Select
                 labelId="roleIds-label"
-                multiple
+
                 name="roleIds"
                 value={formData.roleIds}
                 onChange={handleChange}
