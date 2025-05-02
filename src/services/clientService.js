@@ -5,6 +5,7 @@ const CLIENTS_ENDPOINT = '/api/v1/clients';
 const COSST_ENDPOINT = '/api/v1/cost';
 const AREAS_ENDPOINT = '/api/v1/areas';
 const LICENCE_ENDPOINT = '/api/v1/licenses';
+const ASSINGLICENCE_ENDPOINT = '/api/v1/assignlicenses';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('auth_token');
@@ -153,7 +154,7 @@ const ClientService = {
 
   addLicencia: async (clientId, licenciaData) => {
     try {
-      const res = await axios.post(`${API_URL}${CLIENTS_ENDPOINT}/${clientId}/licencias`, licenciaData, {
+      const res = await axios.post(`${API_URL}${LICENCE_ENDPOINT}/${clientId}`, licenciaData, {
         headers: getAuthHeaders(),
       });
       return res.data;
@@ -163,6 +164,17 @@ const ClientService = {
     }
   },
 
+  assignLicenses : async (clientId,Id ,licenciaData) => {
+    try {
+      const res = await axios.post(`${API_URL}${ASSINGLICENCE_ENDPOINT}/${clientId}/${Id}`, licenciaData, {
+        headers: getAuthHeaders(),
+      });
+      return res.data;
+    } catch (error) {
+      console.error('Error al asignar licencia:', error);
+      throw error;
+    }
+  },
   updateLicencia: async (clientId, licenciaId, licenciaData) => {
     try {
       const res = await axios.put(`${API_URL}${CLIENTS_ENDPOINT}/${clientId}/licencias/${licenciaId}`, licenciaData, {
@@ -175,9 +187,9 @@ const ClientService = {
     }
   },
 
-  deleteLicencia: async (clientId, licenciaId) => {
+  deleteLicenses: async (clientId, licenciaId) => {
     try {
-      const res = await axios.delete(`${API_URL}${CLIENTS_ENDPOINT}/${clientId}/licencias/${licenciaId}`, {
+      const res = await axios.delete(`${API_URL}${LICENCE_ENDPOINT}/${clientId}/${licenciaId}`, {
         headers: getAuthHeaders(),
       });
       return res.data;

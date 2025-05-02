@@ -5,9 +5,7 @@ import TableFilter from '../../shared/components/TableFilter/TableFilter';
 import Layout from '../../shared/components/Layout/Layout';
 import ErrorService from '../../services/errorService';
 import './LicenseList.css';
-/**
- * Update
- */
+
 function LicenseList() {
   const { clientId } = useParams();
   const [licenses, setLicenses] = useState([]);
@@ -19,6 +17,11 @@ function LicenseList() {
   const [licenseToAssign, setLicenseToAssign] = useState(null);
   const [licenseCount, setLicenseCount] = useState('');
   const [selectedClient, setSelectedClient] = useState(null);
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [newLicenseCount, setNewLicenseCount] = useState('');
+  const [newStartDate, setNewStartDate] = useState('');
+  const [newExpiryDate, setNewExpiryDate] = useState('');
 
   const ITEMS_PER_PAGE = 10;
 
@@ -113,13 +116,19 @@ function LicenseList() {
     setIsModalOpen(true);
   };
 
-  const handleEdit = async (id, currentCount) => {
+  const handleEdit = async (id, currentCount, currentStartDate, currentExpiryDate) => {
     const newCount = prompt('Nuevo número de licencias:', currentCount);
-    if (!newCount || isNaN(newCount)) return;
+    const newStartDate = prompt('Nueva fecha de inicio (YYYY-MM-DD):', currentStartDate);
+    const newExpiryDate = prompt('Nueva fecha de vencimiento (YYYY-MM-DD):', currentExpiryDate);
+
+    if (!newCount || !newStartDate || !newExpiryDate) return;
+    if (isNaN(newCount)) return;
 
     try {
       await ClientService.updateLicense(clientId, id, {
-        licenseCount: parseInt(newCount)
+        licenseCount: parseInt(newCount),
+        startDate: newStartDate,
+        expiryDate: newExpiryDate,
       });
       const data = await ClientService.getLicenses(clientId);
       setLicenses(data);
@@ -148,25 +157,29 @@ function LicenseList() {
   };
 
   const handleAdd = async () => {
-    const count = prompt('Cantidad de licencias:');
-    if (!count || isNaN(count)) return;
-
-    const today = new Date();
-    const expiry = new Date();
-    expiry.setFullYear(expiry.getFullYear() + 1);
+    if (!newLicenseCount || !newStartDate || !newExpiryDate || isNaN(newLicenseCount)) {
+      alert('Por favor complete todos los campos con valores válidos.');
+      return;
+    }
 
     try {
-      await ClientService.createLicenses({
-        clientId: parseInt(clientId),
-        licenseCount: parseInt(count),
-        startDate: today.toISOString(),
-        expiryDate: expiry.toISOString(),
-        available: parseInt(count)
-      });
+      await ClientService.addLicencia(
+        parseInt(clientId),
+        {
+          licenseCount: parseInt(newLicenseCount),
+          startDate: newStartDate,
+          expiryDate: newExpiryDate,
+          available: parseInt(newLicenseCount),
+        }
+      );
       const data = await ClientService.getLicenses(clientId);
       setLicenses(data);
       setFiltered(data);
       alert('Licencia agregada');
+      setIsAddModalOpen(false);
+      setNewLicenseCount('');
+      setNewStartDate('');
+      setNewExpiryDate('');
     } catch (error) {
       console.error('Error al agregar:', error);
       alert('No se pudo agregar');
@@ -182,7 +195,9 @@ function LicenseList() {
     <Layout>
       <div className="card">
         <div style={{ marginBottom: '1rem', textAlign: 'right' }}>
-          <button onClick={handleAdd}>➕ Agregar Licencia</button>
+          {clientId === "1" && (
+            <button onClick={() => setIsAddModalOpen(true)}>➕ Agregar Licencia</button>
+          )}
         </div>
 
         <TableFilter
@@ -221,7 +236,11 @@ function LicenseList() {
                   <td>{new Date(license.startDate).toLocaleDateString()}</td>
                   <td>{new Date(license.expiryDate).toLocaleDateString()}</td>
                   <td>
-                    <button >✏️</button>{' '}
+                    <button
+                      onClick={() => handleEdit(license.id, license.licenseCount, license.startDate, license.expiryDate)}
+                    >
+                      ✏️
+                    </button>{' '}
                     <button onClick={() => handleDelete(license.id)}>🗑️</button>{' '}
                     <button onClick={() => handleOpenAssignModal(license)}>📤 Asignar</button>
                   </td>
@@ -246,6 +265,7 @@ function LicenseList() {
         )}
       </div>
 
+      {/* Modal para asignar */}
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal">
@@ -271,6 +291,40 @@ function LicenseList() {
               <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
                 <button onClick={handleAssignLicense}>✅ Asignar</button>
                 <button onClick={() => setIsModalOpen(false)}>❌ Cancelar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal para agregar licencia */}
+      {isAddModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-content">
+              <h2>Agregar Licencia</h2>
+              <label>Cantidad:</label>
+              <input
+                type="number"
+                value={newLicenseCount}
+                onChange={(e) => setNewLicenseCount(e.target.value)}
+                min="1"
+              />
+              <label>Fecha de Inicio:</label>
+              <input
+                type="date"
+                value={newStartDate}
+                onChange={(e) => setNewStartDate(e.target.value)}
+              />
+              <label>Fecha de Vencimiento:</label>
+              <input
+                type="date"
+                value={newExpiryDate}
+                onChange={(e) => setNewExpiryDate(e.target.value)}
+              />
+              <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
+                <button onClick={handleAdd}>✅ Agregar</button>
+                <button onClick={() => setIsAddModalOpen(false)}>❌ Cancelar</button>
               </div>
             </div>
           </div>
