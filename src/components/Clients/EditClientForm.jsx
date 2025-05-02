@@ -97,7 +97,7 @@ function EditClientForm() {
         type: 'success',
       });
 
-      navigate(`/detail_client/${clientId}`);
+      navigate(`/clients`);
     } catch (error) {
       console.error('Error al actualizar cliente:', error);
       alertService.confirmAlert({

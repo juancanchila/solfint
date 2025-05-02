@@ -35,7 +35,7 @@ function AddClientForm() {
     contact1Phone: '',
     contact2Name: '',
     contact2Phone: '',
-    parentClientId: '',
+    parentClientId: 1,
     subClientLimit: 1,
     logo: '',
     employeeCount: '',
@@ -190,7 +190,7 @@ function AddClientForm() {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
+          <FormControl fullWidth>
               <InputLabel id="parentClientId-label">Cliente Padre</InputLabel>
               <Select
                 labelId="parentClientId-label"
@@ -199,7 +199,7 @@ function AddClientForm() {
                 onChange={handleChange}
                 label="Cliente Padre"
               >
-                <MenuItem value="">Sin Cliente Padre</MenuItem>
+                <MenuItem value={1}>Sin Cliente Padre</MenuItem>
                 {clients.map((client) => (
                   <MenuItem key={client.id} value={client.id}>
                     {client.name}

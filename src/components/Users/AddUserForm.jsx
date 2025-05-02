@@ -28,7 +28,7 @@ function AddUserForm() {
     whatsapp: '',
     ciudad:'',
     fullName: '',
-    clientId: '',
+    clientId: 1,
     roleIds:  '',
   });
 
@@ -71,10 +71,7 @@ function AddUserForm() {
     temp.email = /\S+@\S+\.\S+/.test(formData.email) ? '' : 'Correo inválido';
     temp.password = formData.password.length >= 6 ? '' : 'Mínimo 6 caracteres';
     temp.telefono = /^\d{10}$/.test(formData.telefono) ? '' : 'Teléfono debe tener 10 dígitos';
-    temp.whatsapp = /^\d{10}$/.test(formData.whatsapp) ? '' : 'WhatsApp debe tener 10 dígitos'; // Validación para WhatsApp
     temp.roleIds = formData.roleIds ? '' : 'Seleccione un rol';
-    temp.clientId = formData.clientId ? '': 1;
-    temp.ciudad = formData.ciudad ? '' : 'Ciudad requerida';
     setErrors(temp);
     return Object.values(temp).every((x) => x === '');
   };
@@ -229,23 +226,28 @@ function AddUserForm() {
         {/* Role and Client */}
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel id="roleIds-label">Roles</InputLabel>
-              <Select
-                labelId="roleIds-label"
+          <FormControl fullWidth error={!!errors.roleIds}>
+  <InputLabel id="roleIds-label">Roles</InputLabel>
+  <Select
+    labelId="roleIds-label"
+    name="roleIds"
+    value={formData.roleIds}
+    onChange={handleChange}
+    label="Roles"
+  >
+    {roles.map((role) => (
+      <MenuItem key={role.id} value={role.id}>
+        {role.name}
+      </MenuItem>
+    ))}
+  </Select>
+  {errors.roleIds && (
+    <Typography variant="caption" color="error">
+      {errors.roleIds}
+    </Typography>
+  )}
+</FormControl>
 
-                name="roleIds"
-                value={formData.roleIds}
-                onChange={handleChange}
-                label="Roles"
-              >
-                {roles.map((role) => (
-                  <MenuItem key={role.id} value={role.id}>
-                    {role.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
           </Grid>
 
           <Grid item xs={12} sm={6}>
@@ -258,7 +260,7 @@ function AddUserForm() {
   onChange={handleChange}
   label="Cliente"
 >
-  <MenuItem value="1">Sin cliente padre</MenuItem>  {/* Opción con valor '1' */}
+  <MenuItem value={1} >Sin cliente padre</MenuItem>  {/* Opción con valor '1' */}
 
   {clients.map((client) => (
     <MenuItem key={client.id} value={client.id}>
