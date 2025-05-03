@@ -1,21 +1,51 @@
-/* src/components/Subjects/Subjects.css */
-.subject-list {
-    list-style: none;
-    padding: 0;
-  }
+.subjects-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
 
-  .subject-item {
-    cursor: pointer;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 5px;
-  }
+.subjects-table th,
+.subjects-table td {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
 
-  .subject-item h2 {
-    margin: 0;
-  }
+.subjects-table td {
+  font-family: monospace; /* uniforme con queues */
+}
 
-  .subject-item p {
-    margin: 5px 0;
-  }
+.subjects-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.subjects-pagination {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.subjects-pagination button {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+}
+
+.subjects-pagination button.active {
+  background: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+.subjects-card {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.subjects-card .table-filter {
+  margin-bottom: 1rem;
+}

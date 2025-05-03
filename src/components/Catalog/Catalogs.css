@@ -8,7 +8,7 @@
 
   /* Tarjetas de cada catálogo */
   .catalog-item {
-    border: 1px solid #ddd;
+
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -17,20 +17,8 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
-  /* Hover sobre las tarjetas */
-  .catalog-item:hover {
-    background-color: #f9f9f9;
-    transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-  }
 
-  /* Títulos de los catálogos */
-  .catalog-item h2 {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 10px;
-  }
+
 
   /* Estilos para los detalles debajo del título */
   .catalog-item p {
@@ -64,7 +52,6 @@
   /* Estilo del botón dentro del modal */
   .modal-content button {
     background-color: #007bff;
-    color: white;
     border: none;
     padding: 12px 25px;
     cursor: pointer;

@@ -1,13 +1,101 @@
-.exam-list {
-    margin-top: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+/* Exams.css - Estilo minimalista similar a translations-table */
+
+.exams-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.exams-table th,
+.exams-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.exams-table th {
+  background-color: #f2f2f2;
+}
+
+/* Estilo para la lista de resultados dentro de la tabla */
+.exam-results {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.9em;
+}
+
+.exam-results li {
+  margin: 4px 0;
+}
+
+/* Select de acciones */
+.exams-table select {
+  padding: 6px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.exams-table select:hover {
+  border-color: #007bff;
+}
+
+/* Paginación (igual que translations-table) */
+.pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.pagination button {
+  margin: 0 5px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  background-color: white;
+}
+
+.pagination button.active {
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+}
+
+.pagination button:hover:not(.active) {
+  background-color: #f2f2f2;
+}
+
+/* Estilos para el diálogo/modal de detalles */
+.exam-detail {
+  padding: 10px;
+}
+
+.exam-detail h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.exam-detail p {
+  margin: 8px 0;
+}
+
+.exam-detail strong {
+  color: #555;
+}
+
+/* Versión responsiva */
+@media screen and (max-width: 768px) {
+  .exams-table {
+      display: block;
+      overflow-x: auto;
   }
 
-  .exam-item {
-    border: 1px solid #ccc;
-    padding: 15px;
-    border-radius: 10px;
-    background-color: #f9f9f9;
+  .exams-table th,
+  .exams-table td {
+      padding: 6px;
+      font-size: 0.85em;
   }
+
+  .exam-results li {
+      font-size: 0.8em;
+  }
+}

@@ -29,7 +29,7 @@ function Subjects() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [noResults, setNoResults] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [catalogList, setCatalogList] = useState([]); // Catalogo de Exámenes
+  const [catalogList, setCatalogList] = useState([]);
   const ITEMS_PER_PAGE = 10;
 
   useEffect(() => {
@@ -39,7 +39,6 @@ function Subjects() {
         setSubjects(data);
         setFilteredSubjects(data);
       } catch (error) {
-
         console.error("Error al obtener los sujetos:", error);
         ErrorService.handle(error);
       } finally {
@@ -50,14 +49,14 @@ function Subjects() {
     const fetchCatalogList = async () => {
       try {
         const catalog = await apiService.getCatalogList();
-        setCatalogList(catalog); // Asigna el catálogo obtenido
+        setCatalogList(catalog);
       } catch (error) {
         console.error("Error al obtener el catálogo de exámenes:", error);
       }
     };
 
     fetchSubjects();
-    fetchCatalogList(); // Llama para obtener los datos del catálogo de exámenes
+    fetchCatalogList();
   }, []);
 
   const handleFilterChange = ({ field, value, ascending }) => {
@@ -137,80 +136,107 @@ function Subjects() {
     const file = event.target.files[0];
     if (!file) return;
 
-    if (file.size > 1024 * 100) {
-      console.error("El archivo excede el tamaño máximo permitido (100 KB).");
-      return;
-    }
-
     try {
-      const jsonSubjects = await subjectService.parseCSVFile(file);
-      console.log("Sujetos extraídos del CSV:", jsonSubjects);
+      await subjectService.importSubjectsCSV(file);
+      alert("CSV importado correctamente");
+      const updatedList = await apiService.getSubjectList();
+      setSubjects(updatedList);
+      setFilteredSubjects(updatedList);
     } catch (error) {
-      console.error("Error al procesar el archivo CSV:", error.message);
+      console.error("Error al importar CSV:", error);
+      alert("Error al importar CSV");
     }
   };
 
   return (
     <Layout>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1 style={{ margin: 0 }}>Gestión de Evaluados</h1>
-        <div>
-          <Tooltip title="Importar Sujetos CSV">
-            <IconButton color="secondary" component="label">
-              <UploadFileIcon sx={{ fontSize: 28 }} />
+      <div className="card">
+        <h2>Sujetos Registrados</h2>
+
+        <div className="subjects-toolbar">
+          <Tooltip title="Crear nuevo sujeto">
+            <IconButton onClick={openCreateSubjectModal}>
+              <AddCircleOutlineIcon />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Importar CSV">
+            <IconButton component="label">
+              <UploadFileIcon />
               <input type="file" accept=".csv" hidden onChange={handleCSVImport} />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Agregar Sujeto">
-            <IconButton color="primary" onClick={openCreateSubjectModal}>
-              <AddCircleOutlineIcon sx={{ fontSize: 32 }} />
-            </IconButton>
-          </Tooltip>
         </div>
+
+        <TableFilter fields={fields} onFilter={handleFilterChange} />
+
+        <table className="subjects-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Teléfono</th>
+              <th>Token</th>
+              <th>Fecha Creación</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {noResults ? (
+              <tr>
+                <td colSpan="7" style={{ textAlign: "center", color: "red" }}>
+                  No se encontraron resultados.
+                </td>
+              </tr>
+            ) : (
+              paginatedSubjects.map((subject) => (
+                <tr key={subject.subjectId}>
+                  <td>{subject.subjectId}</td>
+                  <td>{subject.subjectName}</td>
+                  <td>{subject.subjectEmail}</td>
+                  <td>{subject.subjectMobile}</td>
+                  <td>{subject.subjectToken}</td>
+                  <td>{new Date(subject.subjectCreated).toLocaleString()}</td>
+                  <td>
+                    <button onClick={() => handleSubjectClick(subject)}>Ver</button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+
+        {!noResults && (
+          <div className="pagination">
+            {Array.from({ length: Math.ceil(filteredSubjects.length / ITEMS_PER_PAGE) }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(i + 1)}
+                className={currentPage === i + 1 ? 'active' : ''}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
-      <p>Este es el contenido de la página de Evaluados.</p>
-      <hr />
-      <h3>Listado de Evaluados</h3>
-
-      <TableFilter fields={fields} onFilter={handleFilterChange} />
-
-      {loading ? (
-        <p>Cargando Evaluados...</p>
-      ) : noResults ? (
-        <p>No se encontraron evaluados con los criterios de búsqueda.</p>
-      ) : (
-        <>
-          <ul className="subject-list">
-            {paginatedSubjects.map((subject) => (
-              <li key={subject.subjectId} className="subject-item" onClick={() => handleSubjectClick(subject)}>
-                <h2>{subject.subjectName}</h2>
-                <p><strong>Email:</strong> {subject.subjectEmail}</p>
-                <p><strong>Móvil:</strong> {subject.subjectMobile}</p>
-                <p><strong>Token:</strong> {subject.subjectToken}</p>
-                <p><strong>Creado:</strong> {new Date(subject.subjectCreated).toLocaleString()}</p>
-              </li>
-            ))}
-          </ul>
-
-          {filteredSubjects.length > ITEMS_PER_PAGE && (
-            <div className="pagination">
-              {Array.from({ length: Math.ceil(filteredSubjects.length / ITEMS_PER_PAGE) }, (_, i) => (
-                <button key={i} onClick={() => setCurrentPage(i + 1)} className={currentPage === i + 1 ? "active" : ""}>
-                  {i + 1}
-                </button>
-              ))}
-            </div>
-          )}
-        </>
-      )}
-
       {selectedSubject && (
-        <SubjectDetailModal subject={selectedSubject} onClose={closeModal} loading={modalLoading} catalogList={catalogList} />
+        <SubjectDetailModal
+          open={!!selectedSubject}
+          onClose={closeModal}
+          subject={selectedSubject}
+          loading={modalLoading}
+        />
       )}
 
       {showCreateModal && (
-        <SubjectCreateModal onClose={closeCreateSubjectModal} onSubjectCreated={handleSubjectCreated} />
+        <SubjectCreateModal
+          open={showCreateModal}
+          onClose={closeCreateSubjectModal}
+          onCreated={handleSubjectCreated}
+        />
       )}
     </Layout>
   );

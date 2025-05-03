@@ -61,6 +61,7 @@ const routes = [
       { path: "/translate", element: <Translate /> },
       { path: "/exams", element: <Exams /> },
       { path: "/queue", element: <QueueList /> },
+      { path: "/prepared", element: <QueueList /> },
       { path: "/queue/:examId", element: <QueueDetail /> },
       { path: "/catalog", element: <Catalog /> },
       { path: "/subjets", element: <Subjets /> },

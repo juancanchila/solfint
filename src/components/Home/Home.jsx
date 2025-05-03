@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../shared/components/Layout/Layout';
-import QueueList from '../Exams/QueueList';  // Aquí importas el componente QueueList
 import './Home.css';
 
 function Home() {
@@ -35,10 +34,7 @@ function Home() {
         </div>
 
       </div>
-      <div className="queues-section">
 
-        <QueueList /> {/* Aquí agregas la lista de colas como un componente profesional */}
-      </div>
     </Layout>
   );
 }

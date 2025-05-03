@@ -1,0 +1,40 @@
+.translations-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .translations-table th,
+  .translations-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+
+  .translations-table th {
+    background-color: #f2f2f2;
+  }
+
+  .pagination {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .pagination button {
+    margin: 0 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+
+  .pagination button.active {
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+  }
+
+  .pagination button:hover {
+    background-color: #0056b3;
+  }
+
+  button:hover {
+    background-color: #d32f2f;
+  }

@@ -112,7 +112,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
               </li>
               <li>
                 <button
-                  onClick={() => navigate("/home")}
+                  onClick={() => navigate("/queue")}
                   className="logout-btn"
                 >
                  Preparados

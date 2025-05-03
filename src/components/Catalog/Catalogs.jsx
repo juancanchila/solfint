@@ -1,56 +1,88 @@
-import React, { useEffect, useState } from "react";
-import Layout from "../../shared/components/Layout/Layout";
-import apiService from "../../services/apiService";
-import CatalogDetailModal from "./CatalogDetailModal";
-import CatalogUpdate from "./CatalogUpdate";
-import EditIcon from "@mui/icons-material/Edit";
-import IconButton from "@mui/material/IconButton";
-import Dialog from "@mui/material/Dialog";
-import CircularProgress from "@mui/material/CircularProgress";
-import "./Catalogs.css";
-import translateService from "../../services/translateService";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import apiService from '../../services/apiService';
+import TableFilter from '../../shared/components/TableFilter/TableFilter';
+import './Catalogs.css';
 import ErrorService from '../../services/errorService';
+import CatalogUpdateModal from './CatalogUpdateModal'; // Modal importado
+import Dialog from '@mui/material/Dialog';
+import CircularProgress from '@mui/material/CircularProgress';
+import translateService from '../../services/translateService'; // Asegúrate de importar el servicio para traducción
+import Layout from '../../shared/components/Layout/Layout';
 
 function Catalogs() {
   const [catalogs, setCatalogs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedCatalogDetail, setSelectedCatalogDetail] = useState(null);
+  const [filtered, setFiltered] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [noResults, setNoResults] = useState(false);
   const [selectedCatalogEdit, setSelectedCatalogEdit] = useState(null);
   const [modalLoading, setModalLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const ITEMS_PER_PAGE = 10;
 
   useEffect(() => {
     const fetchCatalogs = async () => {
       try {
         const data = await apiService.getCatalogList();
-        console.log(data);
         setCatalogs(data);
+        setFiltered(data);
       } catch (error) {
-        console.error("Error al obtener los catálogos:", error);
-         ErrorService.handle(error);
-      } finally {
-        setLoading(false);
+        console.error('Error al cargar catálogos:', error);
+        ErrorService.handle(error);
       }
     };
+
     fetchCatalogs();
   }, []);
 
-  const handleDetailClick = (catalog) => {
-    setSelectedCatalogDetail(catalog);
+  const handleFilterChange = ({ field, value, ascending }) => {
+    let result = [...catalogs];
+
+    if (value.trim() !== '') {
+      result = result.filter((cat) => {
+        const fieldValue = cat[field] !== null && cat[field] !== undefined
+          ? String(cat[field]).toLowerCase()
+          : '';
+        return fieldValue.includes(value.toLowerCase());
+      });
+    }
+
+    result.sort((a, b) => {
+      const aVal = a[field];
+      const bVal = b[field];
+
+      if (typeof aVal === 'string' && typeof bVal === 'string') {
+        return ascending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+      }
+
+      return ascending ? aVal - bVal : bVal - aVal;
+    });
+
+    setFiltered(result);
+    setCurrentPage(1);
+    setNoResults(result.length === 0);
   };
 
-  const handleEditClick = (event, catalog) => {
-    event.stopPropagation();
-    setSelectedCatalogEdit(catalog);
+  const paginate = (data) => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return data.slice(start, start + ITEMS_PER_PAGE);
   };
 
-  const closeDetailModal = () => {
-    setSelectedCatalogDetail(null);
+  const handleActionChange = (e, catalog) => {
+    const action = e.target.value;
+
+    if (action === 'ver') {
+      console.log('Detalle del catálogo:', catalog);
+      // Aquí podrías abrir un modal o navegar a detalle
+    } else if (action === 'editar') {
+      setSelectedCatalogEdit(catalog);  // Abre el modal de edición
+    }
+
+    e.target.selectedIndex = 0; // Resetear el select
   };
 
-  const closeEditModal = () => {
-    setSelectedCatalogEdit(null);
-  };
-
+  // El método que realiza la actualización y la creación de traducción
   const handleCatalogUpdated = async (updatedCatalog) => {
     console.log(updatedCatalog, "ready to update");
     setModalLoading(true);
@@ -72,9 +104,16 @@ function Catalogs() {
         console.log("Traducción actualizada con éxito");
       }
 
-      // Refrescar la lista de catálogos
+      // Refrescar la lista de catálogos después de la actualización
       const refreshedCatalogs = await apiService.getCatalogList();
+
+      // Actualizamos el estado de los catálogos en la interfaz
       setCatalogs(refreshedCatalogs);
+      setFiltered(refreshedCatalogs); // También actualizamos los filtros si es necesario
+
+      // Log de la lista actualizada para confirmación
+      console.log("Lista de catálogos actualizada:", refreshedCatalogs);
+
     } catch (error) {
       console.error("Error al actualizar el catálogo:", error);
     } finally {
@@ -83,61 +122,81 @@ function Catalogs() {
     }
   };
 
-  return (
-    <Layout>
-      <h1>Gestión de Catálogos</h1>
-      <p>Este es el contenido de la página de catálogos.</p>
-      <hr />
-      <h3>Listado de catálogos</h3>
 
-      {loading ? (
-        <p>Cargando catálogos...</p>
-      ) : catalogs.length > 0 ? (
-        <div className="catalog-list">
-          {catalogs.map((catalog, index) => (
-            <div
-              key={index}
-              className="catalog-item"
-              onClick={() => handleDetailClick(catalog)}
-              style={{ cursor: "pointer" }}
+  // Cerrar el modal
+  const closeEditModal = () => {
+    setSelectedCatalogEdit(null);
+  };
+
+  const paginated = paginate(filtered);
+
+  return (
+     <Layout>
+    <div className="card">
+      <h2>Gestión de Catálogos</h2>
+
+      <TableFilter
+        fields={[
+          { field: 'examName', label: 'Nombre del Examen' },
+          { field: 'examLocale', label: 'Idioma' },
+          { field: 'customerId', label: 'Cliente' },
+          { field: 'templateId', label: 'Plantilla' }
+        ]}
+        onFilter={handleFilterChange}
+      />
+
+      <table className="queues-table">
+        <thead>
+          <tr>
+            <th>Nombre del Examen</th>
+            <th>Idioma</th>
+            <th>Cliente</th>
+            <th>Plantilla</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {noResults ? (
+            <tr>
+              <td colSpan="5" style={{ textAlign: 'center', color: 'red' }}>
+                No se encontraron resultados.
+              </td>
+            </tr>
+          ) : (
+            paginated.map((catalog, idx) => (
+              <tr key={idx}>
+                <td>{catalog.examName}</td>
+                <td>{catalog.examLocale}</td>
+                <td>{catalog.customerId}</td>
+                <td>{catalog.templateId}</td>
+                <td>
+                  <select onChange={(e) => handleActionChange(e, catalog)}>
+                    <option value="">Acción</option>
+                    <option value="ver">Ver</option>
+                    <option value="editar">Editar</option>
+                  </select>
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+
+      {!noResults && (
+        <div className="pagination">
+          {Array.from({ length: Math.ceil(filtered.length / ITEMS_PER_PAGE) }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              className={i + 1 === currentPage ? 'active' : ''}
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <h2>{catalog.examName}</h2>
-                <IconButton onClick={(e) => handleEditClick(e, catalog)}>
-                  <EditIcon />
-                </IconButton>
-              </div>
-              <p>
-                <strong>Idioma:</strong> {catalog.examLocale}
-              </p>
-              <p>
-                <strong>Customer ID:</strong> {catalog.customerId}
-              </p>
-              <p>
-                <strong>Template ID:</strong> {catalog.templateId}
-              </p>
-            </div>
+              {i + 1}
+            </button>
           ))}
         </div>
-      ) : (
-        <p>No se encontraron catálogos.</p>
       )}
 
-      {selectedCatalogDetail && (
-        <CatalogDetailModal
-          catalog={selectedCatalogDetail}
-          onClose={closeDetailModal}
-          onUpdate={handleCatalogUpdated}
-          loading={modalLoading}
-        />
-      )}
-
+      {/* Modal de edición */}
       <Dialog
         open={Boolean(selectedCatalogEdit)}
         onClose={closeEditModal}
@@ -145,20 +204,21 @@ function Catalogs() {
         fullWidth
       >
         {modalLoading ? (
-          <div style={{ padding: "2rem", textAlign: "center" }}>
+          <div style={{ padding: '2rem', textAlign: 'center' }}>
             <CircularProgress />
             <p>Guardando cambios...</p>
           </div>
         ) : (
           selectedCatalogEdit && (
-            <CatalogUpdate
+            <CatalogUpdateModal
               catalog={selectedCatalogEdit}
               onClose={closeEditModal}
-              onUpdate={handleCatalogUpdated}
+              onUpdate={handleCatalogUpdated}  // Se pasa el método de actualización
             />
           )
         )}
       </Dialog>
+    </div>
     </Layout>
   );
 }
