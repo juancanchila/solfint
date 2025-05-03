@@ -231,7 +231,7 @@ function EditUserForm() {
               fullWidth
               name="roleIds"
               label="Rol"
-              value={formData.roleIds[0] || ''}
+              value={formData.roleIds}
               onChange={handleChange}
               error={!!errors.roleIds}
               helperText={errors.roleIds}

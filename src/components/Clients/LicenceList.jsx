@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import ClientService from '../../services/clientService';
-import TableFilter from '../../shared/components/TableFilter/TableFilter';
-import Layout from '../../shared/components/Layout/Layout';
-import ErrorService from '../../services/errorService';
-import './LicenseList.css';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import ClientService from "../../services/clientService";
+import TableFilter from "../../shared/components/TableFilter/TableFilter";
+import Layout from "../../shared/components/Layout/Layout";
+import ErrorService from "../../services/errorService";
+import "./LicenseList.css";
 
 function LicenseList() {
   const { clientId } = useParams();
@@ -15,13 +15,13 @@ function LicenseList() {
   const [noResults, setNoResults] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [licenseToAssign, setLicenseToAssign] = useState(null);
-  const [licenseCount, setLicenseCount] = useState('');
+  const [licenseCount, setLicenseCount] = useState("");
   const [selectedClient, setSelectedClient] = useState(null);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [newLicenseCount, setNewLicenseCount] = useState('');
-  const [newStartDate, setNewStartDate] = useState('');
-  const [newExpiryDate, setNewExpiryDate] = useState('');
+  const [newLicenseCount, setNewLicenseCount] = useState("");
+  const [newStartDate, setNewStartDate] = useState("");
+  const [newExpiryDate, setNewExpiryDate] = useState("");
 
   const ITEMS_PER_PAGE = 10;
 
@@ -35,7 +35,7 @@ function LicenseList() {
         }
       } catch (error) {
         ErrorService.handle(error);
-        console.error('Error al cargar licencias:', error);
+        console.error("Error al cargar licencias:", error);
       }
     };
 
@@ -45,7 +45,7 @@ function LicenseList() {
         setClients(data);
       } catch (error) {
         ErrorService.handle(error);
-        console.error('Error al cargar clientes:', error);
+        console.error("Error al cargar clientes:", error);
       }
     };
 
@@ -56,9 +56,11 @@ function LicenseList() {
   const handleFilterChange = ({ field, value, ascending }) => {
     let result = [...licenses];
 
-    if (value.trim() !== '') {
+    if (value.trim() !== "") {
       result = result.filter((item) =>
-        String(item[field] || '').toLowerCase().includes(value.toLowerCase())
+        String(item[field] || "")
+          .toLowerCase()
+          .includes(value.toLowerCase())
       );
     }
 
@@ -66,7 +68,7 @@ function LicenseList() {
       const aVal = a[field];
       const bVal = b[field];
 
-      if (typeof aVal === 'string') {
+      if (typeof aVal === "string") {
         return ascending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
       }
       return ascending ? aVal - bVal : bVal - aVal;
@@ -81,7 +83,9 @@ function LicenseList() {
     const available = licenseToAssign?.available || 0;
 
     if (!selectedClient || !licenseCount || isNaN(licenseCount)) {
-      alert('Por favor ingrese un número válido de licencias y seleccione un cliente.');
+      alert(
+        "Por favor ingrese un número válido de licencias y seleccione un cliente."
+      );
       return;
     }
 
@@ -97,29 +101,44 @@ function LicenseList() {
     };
 
     try {
-      await ClientService.assignLicenses(clientId, licenseToAssign.id, requestData);
+      await ClientService.assignLicenses(
+        clientId,
+        licenseToAssign.id,
+        requestData
+      );
       const data = await ClientService.getLicenses(clientId);
       setLicenses(data);
       setFiltered(data);
-      alert('Licencia asignada');
+      alert("Licencia asignada");
       setIsModalOpen(false);
     } catch (error) {
-      console.error('Error al asignar licencia:', error);
-      alert('No se pudo asignar la licencia');
+      console.error("Error al asignar licencia:", error);
+      alert("No se pudo asignar la licencia");
     }
   };
 
   const handleOpenAssignModal = (license) => {
     setLicenseToAssign(license);
-    setLicenseCount('');
+    setLicenseCount("");
     setSelectedClient(null);
     setIsModalOpen(true);
   };
 
-  const handleEdit = async (id, currentCount, currentStartDate, currentExpiryDate) => {
-    const newCount = prompt('Nuevo número de licencias:', currentCount);
-    const newStartDate = prompt('Nueva fecha de inicio (YYYY-MM-DD):', currentStartDate);
-    const newExpiryDate = prompt('Nueva fecha de vencimiento (YYYY-MM-DD):', currentExpiryDate);
+  const handleEdit = async (
+    id,
+    currentCount,
+    currentStartDate,
+    currentExpiryDate
+  ) => {
+    const newCount = prompt("Nuevo número de licencias:", currentCount);
+    const newStartDate = prompt(
+      "Nueva fecha de inicio (YYYY-MM-DD):",
+      currentStartDate
+    );
+    const newExpiryDate = prompt(
+      "Nueva fecha de vencimiento (YYYY-MM-DD):",
+      currentExpiryDate
+    );
 
     if (!newCount || !newStartDate || !newExpiryDate) return;
     if (isNaN(newCount)) return;
@@ -133,15 +152,15 @@ function LicenseList() {
       const data = await ClientService.getLicenses(clientId);
       setLicenses(data);
       setFiltered(data);
-      alert('Licencia actualizada');
+      alert("Licencia actualizada");
     } catch (error) {
-      console.error('Error al actualizar:', error);
-      alert('No se pudo actualizar');
+      console.error("Error al actualizar:", error);
+      alert("No se pudo actualizar");
     }
   };
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm('¿Eliminar esta licencia?');
+    const confirmed = window.confirm("¿Eliminar esta licencia?");
     if (!confirmed) return;
 
     try {
@@ -149,40 +168,42 @@ function LicenseList() {
       const updated = licenses.filter((l) => l.id !== id);
       setLicenses(updated);
       setFiltered(updated);
-      alert('Licencia eliminada');
+      alert("Licencia eliminada");
     } catch (error) {
-      console.error('Error al eliminar:', error);
-      alert('No se pudo eliminar');
+      console.error("Error al eliminar:", error);
+      alert("No se pudo eliminar");
     }
   };
 
   const handleAdd = async () => {
-    if (!newLicenseCount || !newStartDate || !newExpiryDate || isNaN(newLicenseCount)) {
-      alert('Por favor complete todos los campos con valores válidos.');
+    if (
+      !newLicenseCount ||
+      !newStartDate ||
+      !newExpiryDate ||
+      isNaN(newLicenseCount)
+    ) {
+      alert("Por favor complete todos los campos con valores válidos.");
       return;
     }
 
     try {
-      await ClientService.addLicencia(
-        parseInt(clientId),
-        {
-          licenseCount: parseInt(newLicenseCount),
-          startDate: newStartDate,
-          expiryDate: newExpiryDate,
-          available: parseInt(newLicenseCount),
-        }
-      );
+      await ClientService.addLicencia(parseInt(clientId), {
+        licenseCount: parseInt(newLicenseCount),
+        startDate: newStartDate,
+        expiryDate: newExpiryDate,
+        available: parseInt(newLicenseCount),
+      });
       const data = await ClientService.getLicenses(clientId);
       setLicenses(data);
       setFiltered(data);
-      alert('Licencia agregada');
+      alert("Licencia agregada");
       setIsAddModalOpen(false);
-      setNewLicenseCount('');
-      setNewStartDate('');
-      setNewExpiryDate('');
+      setNewLicenseCount("");
+      setNewStartDate("");
+      setNewExpiryDate("");
     } catch (error) {
-      console.error('Error al agregar:', error);
-      alert('No se pudo agregar');
+      console.error("Error al agregar:", error);
+      alert("No se pudo agregar");
     }
   };
 
@@ -194,17 +215,19 @@ function LicenseList() {
   return (
     <Layout>
       <div className="card">
-        <div style={{ marginBottom: '1rem', textAlign: 'right' }}>
+        <div style={{ marginBottom: "1rem", textAlign: "right" }}>
           {clientId === "1" && (
-            <button onClick={() => setIsAddModalOpen(true)}>➕ Agregar Licencia</button>
+            <button onClick={() => setIsAddModalOpen(true)}>
+              ➕ Agregar Licencia
+            </button>
           )}
         </div>
 
         <TableFilter
           fields={[
-            { field: 'id', label: 'ID' },
-            { field: 'licenseCount', label: 'Cantidad' },
-            { field: 'available', label: 'Disponible' }
+            { field: "id", label: "ID" },
+            { field: "licenseCount", label: "Cantidad" },
+            { field: "available", label: "Disponible" },
           ]}
           onFilter={handleFilterChange}
         />
@@ -223,7 +246,7 @@ function LicenseList() {
           <tbody>
             {noResults ? (
               <tr>
-                <td colSpan="6" style={{ textAlign: 'center', color: 'red' }}>
+                <td colSpan="6" style={{ textAlign: "center", color: "red" }}>
                   No se encontraron resultados.
                 </td>
               </tr>
@@ -236,8 +259,10 @@ function LicenseList() {
                   <td>{new Date(license.startDate).toLocaleDateString()}</td>
                   <td>{new Date(license.expiryDate).toLocaleDateString()}</td>
                   <td>
-                          <button onClick={() => handleDelete(license.id)}>🗑️</button>{' '}
-                    <button onClick={() => handleOpenAssignModal(license)}>📤 Asignar</button>
+                    <button onClick={() => handleDelete(license.id)}>🗑️</button>{" "}
+                    <button onClick={() => handleOpenAssignModal(license)}>
+                      📤 Asignar
+                    </button>
                   </td>
                 </tr>
               ))
@@ -247,15 +272,18 @@ function LicenseList() {
 
         {!noResults && (
           <div className="pagination">
-            {Array.from({ length: Math.ceil(filtered.length / ITEMS_PER_PAGE) }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={currentPage === i + 1 ? 'active' : ''}
-              >
-                {i + 1}
-              </button>
-            ))}
+            {Array.from(
+              { length: Math.ceil(filtered.length / ITEMS_PER_PAGE) },
+              (_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={currentPage === i + 1 ? "active" : ""}
+                >
+                  {i + 1}
+                </button>
+              )
+            )}
           </div>
         )}
       </div>
@@ -267,7 +295,10 @@ function LicenseList() {
             <div className="modal-content">
               <h2>Asignar Licencia</h2>
               <label>Seleccionar Cliente:</label>
-              <select value={selectedClient || ''} onChange={(e) => setSelectedClient(e.target.value)}>
+              <select
+                value={selectedClient || ""}
+                onChange={(e) => setSelectedClient(e.target.value)}
+              >
                 <option value="">Seleccione un cliente</option>
                 {clients.map((client) => (
                   <option key={client.id} value={client.id}>
@@ -275,7 +306,9 @@ function LicenseList() {
                   </option>
                 ))}
               </select>
-              <label>Cantidad de Licencias (máximo {licenseToAssign?.available}):</label>
+              <label>
+                Cantidad de Licencias (máximo {licenseToAssign?.available}):
+              </label>
               <input
                 type="number"
                 value={licenseCount}
@@ -283,9 +316,11 @@ function LicenseList() {
                 min="1"
                 max={licenseToAssign?.available}
               />
-              <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
+              <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
                 <button onClick={handleAssignLicense}>✅ Asignar</button>
-                <button onClick={() => setIsModalOpen(false)}>❌ Cancelar</button>
+                <button onClick={() => setIsModalOpen(false)}>
+                  ❌ Cancelar
+                </button>
               </div>
             </div>
           </div>
@@ -302,9 +337,17 @@ function LicenseList() {
               <input
                 type="number"
                 value={newLicenseCount}
-                onChange={(e) => setNewLicenseCount(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  // Solo permitir valores enteros positivos
+                  if (/^\d*$/.test(val)) {
+                    setNewLicenseCount(val);
+                  }
+                }}
                 min="1"
+                step="1"
               />
+
               <label>Fecha de Inicio:</label>
               <input
                 type="date"
@@ -317,9 +360,11 @@ function LicenseList() {
                 value={newExpiryDate}
                 onChange={(e) => setNewExpiryDate(e.target.value)}
               />
-              <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
+              <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
                 <button onClick={handleAdd}>✅ Agregar</button>
-                <button onClick={() => setIsAddModalOpen(false)}>❌ Cancelar</button>
+                <button onClick={() => setIsAddModalOpen(false)}>
+                  ❌ Cancelar
+                </button>
               </div>
             </div>
           </div>

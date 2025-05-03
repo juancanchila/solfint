@@ -17,23 +17,8 @@ function Home() {
 
   return (
     <Layout>
-      <h1>Bienvenido al Home</h1>
-      <p>Este es el contenido de la página principal. Aquí puedes agregar cualquier información relevante.</p>
-      <div className="cards">
-        <div onClick={handleExam} className="card">
-          <h2>Gestión de Exámenes</h2>
-          <p>Descripción de la tarjeta 1.</p>
-        </div>
-        <div onClick={handleSubjets} className="card">
-          <h2>Gestión de Evaluados</h2>
-          <p>Descripción de la tarjeta 2.</p>
-        </div>
-        <div onClick={handleCatalog} className="card">
-          <h2>Catalogo</h2>
-          <p>Descripción de la tarjeta 3.</p>
-        </div>
+      <h1>DASHBOARD</h1>
 
-      </div>
 
     </Layout>
   );

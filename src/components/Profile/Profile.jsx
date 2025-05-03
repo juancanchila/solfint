@@ -60,21 +60,7 @@ function Profile() {
             <div className="info-value">{user.phone || "—"}</div>
             <div className="info-header">WhatsApp</div>
             <div className="info-value">{user.whatsapp || "—"}</div>
-            <div className="info-header">Cargo</div>
-            <div className="info-value">{user.jobTitle || "—"}</div>
-            <div className="info-header">Foto</div>
-            <div className="info-value">
-              <img
-                src={
-                  user.photoUrl && user.photoUrl.trim() !== ""
-                    ? user.photoUrl
-                    : UserPIc
-                }
-                alt="Foto de perfil"
-                className="profile-photo"
-              />
-            </div>
-            <div className="info-header">Identidad Validada</div>
+                         <div className="info-header">Identidad Validada</div>
             <div className="info-value">
               {user.isIdentityValidated ? "Sí" : "No"}
             </div>
