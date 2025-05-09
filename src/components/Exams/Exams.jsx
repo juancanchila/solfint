@@ -140,8 +140,7 @@ function Exams() {
                   <th>Nombre del Examen</th>
                   <th>Cédula</th>
                   <th>Tema</th>
-                  <th>Configurable</th>
-                  <th>R1</th>
+                     <th>R1</th>
                   <th>R2</th>
                   <th>R3</th>
                   <th>Resultado</th>
@@ -162,7 +161,6 @@ function Exams() {
                       <td>{exam.examName}</td>
                       <td>{exam.subjectToken}</td>
                       <td>{exam.examTopic}</td>
-                      <td>{exam.configurable}</td>
                       <td style={{ backgroundColor: exam.color }}>
 
   {Math.round(exam.examScore1 * 100)}
