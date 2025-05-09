@@ -1,0 +1,28 @@
+class CatalogExam {
+    constructor({
+      id,
+      templateId,
+      tipoDePrueba,
+      clientId,
+      userId,
+      areaId,
+      createdAt,
+      updatedAt
+    }) {
+      this.id = id;
+      this.templateId = templateId;
+      this.tipoDePrueba = tipoDePrueba;
+      this.clientId = clientId;
+      this.userId = userId;
+      this.areaId = areaId;
+      this.createdAt = createdAt;
+      this.updatedAt = updatedAt;
+    }
+
+    // Método getter de ejemplo para mostrar información resumida
+    get summary() {
+      return `${this.tipoDePrueba} - Cliente: ${this.clientId}, Usuario: ${this.userId}, Área: ${this.areaId ?? 'N/A'}`;
+    }
+  }
+
+  export default CatalogExam;

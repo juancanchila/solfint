@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import QueueService from '../../services/apiService'; // Asegúrate de tener un servicio adecuado
+import QueueService from '../../services/apiService';
 import TableFilter from '../../shared/components/TableFilter/TableFilter';
-import './QueueList.css'; // Asegúrate de que el CSS esté adecuado para tu tabla
+import './QueueList.css';
 import ErrorService from '../../services/errorService';
 import Layout from '../../shared/components/Layout/Layout';
 
@@ -18,14 +18,12 @@ function QueueList() {
   useEffect(() => {
     const fetchQueues = async () => {
       try {
-        const data = await QueueService.getQueue(); // Asegúrate de tener un servicio que te traiga las colas
+        const data = await QueueService.getQueue();
         console.log(data);
         setQueues(data);
         setFiltered(data);
       } catch (error) {
-
         console.error('Error al cargar colas:', error);
-
       }
     };
 
@@ -36,7 +34,7 @@ function QueueList() {
     let result = [...queues];
 
     if (value.trim() !== '') {
-      result = result.filter((queue) => {
+      Sarkis = result.filter((queue) => {
         const queueValue = queue[field];
         const fieldValue = queueValue !== null && queueValue !== undefined
           ? String(queueValue).toLowerCase()
@@ -61,7 +59,7 @@ function QueueList() {
       }
 
       if (typeof aVal === 'string' && typeof bVal === 'string') {
-        return ascending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+        return ascending ? aVal.localeCompare(bVal) : bVal.localeCompare(bVal);
       }
 
       return ascending ? aVal - bVal : bVal - aVal;
@@ -90,7 +88,7 @@ function QueueList() {
       const confirmed = window.confirm('¿Estás seguro de eliminar esta cola? Esta acción no se puede revertir.');
       if (confirmed) {
         try {
-          await QueueService.deleteExamFromQueue(queueId); // Aquí deberías eliminar la cola con un servicio adecuado
+          await QueueService.deleteExamFromQueue(queueId);
           alert('Cola eliminada correctamente');
           setQueues((prev) => prev.filter((queue) => queue.examId !== queueId));
           setFiltered((prev) => prev.filter((queue) => queue.examId !== queueId));
@@ -101,75 +99,94 @@ function QueueList() {
       }
     }
 
-    e.target.selectedIndex = 0; // Resetear selección
+    e.target.selectedIndex = 0;
   };
 
   return (
-       <Layout>
-    <div className="card">
-       <h2> Exámenes Preparados</h2>
-       <TableFilter
-  fields={[
-    { field: 'examId', label: 'ID del Examen' },
-    { field: 'customerId', label: 'ID del Cliente' },
-    { field: 'examLocale', label: 'Ubicación del Examen' },
-    { field: 'examQueued', label: 'Estado de la Cola' }
-  ]}
-  onFilter={handleFilterChange}
-/>
+    <Layout>
+      <div className="card">
+        <h2>Exámenes Preparados</h2>
+        <TableFilter
+          fields={[
+            { field: 'subjectToken', label: 'ID Evaluado' },
+            { field: 'clientName', label: 'Nombre Cliente' },
+            { field: 'subjectName', label: 'Nombre Sujeto' },
+            { field: 'examLocale', label: 'Ubicación' },
+            { field: 'examQueued', label: 'Fecha' }
+          ]}
+          onFilter={handleFilterChange}
+        />
 
-      <table className="queues-table">
-        <thead>
-          <tr>
-            <th>Examen ID</th>
-            <th>Cliente</th>
-            <th>Localización</th>
-            <th>Fecha Programada</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {noResults ? (
+        <table className="exams-table">
+          <thead>
             <tr>
-              <td colSpan="5" style={{ textAlign: 'center', color: 'red' }}>
-                No se encontraron resultados.
-              </td>
+              <th>ID Evaluado</th>
+              <th>Cliente</th>
+              <th>Sujeto</th>
+              <th>Email</th>
+              <th>Teléfono</th>
+              <th>Plantilla</th>
+              <th>Ubicación</th>
+              <th>Fecha</th>
+              <th>URL</th>
+              <th>Acciones</th>
             </tr>
-          ) : (
-            paginated.map((queue) => (
-              <tr key={queue.examId}>
-                <td>{queue.examId}</td>
-                <td>{queue.customerId}</td>
-                <td>{queue.examLocale}</td>
-                <td>{new Date(queue.examQueued).toLocaleString()}</td>
-                <td>
-                  <select onChange={(e) => handleActionChange(e, queue.examId)}>
-                    <option value="">Acción</option>
-                    <option value="ver" >Ver</option>
-                    <option value="eliminar" disabled>Eliminar</option>
-                  </select>
+          </thead>
+          <tbody>
+            {noResults ? (
+              <tr>
+                <td colSpan="10" className="no-results">
+                  No se encontraron resultados
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              paginated.map((queue) => (
+                <tr key={queue.examId}>
+                  <td>{queue.subjectToken}</td>
+                  <td>{queue.clientName}</td>
+                  <td>{queue.subjectName}</td>
+                  <td>{queue.subjectEmail}</td>
+                  <td>{queue.subjectMobile}</td>
+                  <td>{queue.templateId}</td>
+                  <td>{queue.examLocale}</td>
+                  <td>{new Date(queue.examQueued).toLocaleString()}</td>
+                  <td className="text-truncate" style={{ maxWidth: '150px' }}>
+                    <a href={queue.examUrl} target="_blank" rel="noopener noreferrer">
+                      Enlace
+                    </a>
+                  </td>
+                  <td>
+                    <select
+                      onChange={(e) => handleActionChange(e, queue.examId)}
+                      className="action-select"
+                    >
+                      <option value="">Acciones</option>
+                      <option value="ver">Ver</option>
+                      <option value="editar">Editar</option>
+                      <option value="eliminar">Eliminar</option>
+                    </select>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
 
-      {!noResults && (
-        <div className="pagination">
-          {Array.from({ length: Math.ceil(filtered.length / ITEMS_PER_PAGE) }, (_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentPage(i + 1)}
-              className={currentPage === i + 1 ? 'active' : ''}
-            >
-              {i + 1}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-       </Layout>
+        {!noResults && (
+          <div className="pagination">
+            {Array.from({ length: Math.ceil(filtered.length / ITEMS_PER_PAGE) }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(i + 1)}
+                className={currentPage === i + 1 ? 'active' : ''}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </Layout>
   );
 }
 

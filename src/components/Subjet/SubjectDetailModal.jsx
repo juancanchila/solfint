@@ -78,7 +78,7 @@ const SubjectDetailModal = ({ subject, onClose, catalogList }) => {
                 <option value="">--Selecciona--</option>
                 {catalogList.map((exam) => (
                   <option key={exam.templateId} value={exam.templateId}>
-                    {exam.examName}
+                    {exam.tipoDePrueba}
                   </option>
                 ))}
               </select>

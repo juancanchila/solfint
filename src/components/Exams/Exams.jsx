@@ -3,7 +3,10 @@ import Layout from "../../shared/components/Layout/Layout";
 import apiService from "../../services/apiService";
 import ErrorService from '../../services/errorService';
 import TableFilter from '../../shared/components/TableFilter/TableFilter';
-import { Box, Typography, CircularProgress, Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
+import {
+  Box, Typography, CircularProgress, Snackbar, Alert,
+  Dialog, DialogTitle, DialogContent, DialogActions, Button
+} from "@mui/material";
 import "./Exams.css";
 
 function Exams() {
@@ -84,7 +87,6 @@ function Exams() {
     if (action === "ver") {
       handleExamClick(examId);
     }
-    // Reset the select value
     e.target.value = "";
   };
 
@@ -108,79 +110,108 @@ function Exams() {
 
   return (
     <Layout>
-      <Box sx={{ p: 2 }}>
-        <Typography variant="h4" gutterBottom>Gestión de Exámenes</Typography>
-        <Typography variant="subtitle1" gutterBottom>Listado de exámenes completados</Typography>
+      <div className="card">
+        <h2>Gestión de Exámenes</h2>
+        <p className="subtitle">Listado de exámenes completados</p>
 
+        {/* Filtro de tabla */}
         <TableFilter
           fields={[
             { field: 'examName', label: 'Nombre del Examen' },
+            { field: 'subjectToken', label: 'Cédula' },
             { field: 'examTopic', label: 'Tema' },
-            { field: 'customerId', label: 'ID Cliente' },
+            { field: 'configurable', label: 'Configurable' },
             { field: 'examScored', label: 'Fecha de Evaluación' }
           ]}
           onFilter={handleFilterChange}
         />
 
+        {/* Mostrar el indicador de carga mientras se obtienen los datos */}
         {loading ? (
-          <CircularProgress sx={{ mt: 3 }} />
+          <div className="loading-container">
+            <CircularProgress />
+          </div>
         ) : (
-          <table className="exams-table">
-            <thead>
-              <tr>
-                <th>Nombre del Examen</th>
-                <th>Tema</th>
-                <th>Resultados</th>
-                <th>Fecha de Evaluación</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {noResults ? (
+          <>
+            {/* Tabla de exámenes */}
+            <table className="exams-table">
+              <thead>
                 <tr>
-                  <td colSpan="5" style={{ textAlign: 'center', color: 'red' }}>
-                    No se encontraron resultados.
-                  </td>
+                  <th>Nombre del Examen</th>
+                  <th>Cédula</th>
+                  <th>Tema</th>
+                  <th>Configurable</th>
+                  <th>R1</th>
+                  <th>R2</th>
+                  <th>R3</th>
+                  <th>Resultado</th>
+                  <th>Fecha de Evaluación</th>
+                  <th>Acciones</th>
                 </tr>
-              ) : (
-                paginated.map((exam) => (
-                  <tr key={exam.examId}>
-                    <td>{exam.examName}</td>
-                    <td>{exam.examTopic}</td>
-                    <td>
-                      <ul className="exam-results">
-                        <li>{exam.examResult1} ({exam.examScore1})</li>
-                        <li>{exam.examResult2} ({exam.examScore2})</li>
-                        <li>{exam.examResult3} ({exam.examScore3})</li>
-                      </ul>
-                    </td>
-                    <td>{new Date(exam.examScored).toLocaleString()}</td>
-                    <td>
-                      <select onChange={(e) => handleActionChange(e, exam.examId)}>
-                        <option value="">Acción</option>
-                        <option value="ver">Ver Detalles</option>
-                        <option value="eliminar" disabled>Eliminar</option>
-                      </select>
+              </thead>
+              <tbody>
+                {noResults ? (
+                  <tr>
+                    <td colSpan="9" className="no-results">
+                      No se encontraron resultados.
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  paginated.map((exam) => (
+                    <tr key={exam.examId}>
+                      <td>{exam.examName}</td>
+                      <td>{exam.subjectToken}</td>
+                      <td>{exam.examTopic}</td>
+                      <td>{exam.configurable}</td>
+                      <td style={{ backgroundColor: exam.color }}>
+
+  {Math.round(exam.examScore1 * 100)}
+</td>
+<td style={{ backgroundColor: exam.color }}>
+  {Math.round(exam.examScore2 * 100)}
+</td>
+<td style={{ backgroundColor: exam.color }}>
+  {Math.round(exam.examScore3 * 100)}
+</td>
+<td style={{ backgroundColor: exam.color }}>
+{exam.resultado}
+</td>
+                      <td>{new Date(exam.examScored).toLocaleString()}</td>
+                      <td>
+                        <select
+                          onChange={(e) => handleActionChange(e, exam.examId)}
+                          className="action-select"
+                        >
+                          <option value="">Acción</option>
+                          <option value="ver">Ver Detalles</option>
+                          <option value="eliminar" disabled>Eliminar</option>
+                          <option value="pdf" disabled>PDF</option>
+                        </select>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+
+            {/* Paginación */}
+            {!noResults && (
+              <div className="pagination">
+                {Array.from({ length: Math.ceil(filtered.length / ITEMS_PER_PAGE) }, (_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={currentPage === i + 1 ? 'active' : ''}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+            )}
+          </>
         )}
 
-        <div className="pagination">
-          {Array.from({ length: Math.ceil(filtered.length / ITEMS_PER_PAGE) }, (_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentPage(i + 1)}
-              className={currentPage === i + 1 ? 'active' : ''}
-            >
-              {i + 1}
-            </button>
-          ))}
-        </div>
-
+        {/* Modal de detalles del examen */}
         {selectedExam && (
           <Dialog open={openDialog} onClose={closeModal} maxWidth="md" fullWidth>
             <DialogTitle>Detalles del Examen</DialogTitle>
@@ -188,10 +219,12 @@ function Exams() {
               <div className="exam-detail">
                 <h2>{selectedExam.examName}</h2>
                 <p><strong>ID del Examen:</strong> {selectedExam.examId}</p>
-                <p><strong>ID del Cliente:</strong> {selectedExam.customerId}</p>
+                <p><strong>Cédula:</strong> {selectedExam.subjectToken}</p>
                 <p><strong>Modelo:</strong> {selectedExam.examModel}</p>
                 <p><strong>Idioma:</strong> {selectedExam.examLocale}</p>
                 <p><strong>Tema:</strong> {selectedExam.examTopic}</p>
+                <p><strong>Configurable:</strong> {selectedExam.configurable}</p>
+                <p><strong>Color:</strong> {selectedExam.color}</p>
                 <p><strong>Fecha de Cola:</strong> {new Date(selectedExam.examQueued).toLocaleString()}</p>
                 <p><strong>Fecha de Evaluación:</strong> {new Date(selectedExam.examScored).toLocaleString()}</p>
 
@@ -214,10 +247,11 @@ function Exams() {
           </Dialog>
         )}
 
+        {/* Snackbar de errores o éxitos */}
         <Snackbar open={openSnackbar} autoHideDuration={4000} onClose={() => setOpenSnackbar(false)}>
           <Alert severity={snackbarSeverity}>{snackbarMessage}</Alert>
         </Snackbar>
-      </Box>
+      </div>
     </Layout>
   );
 }

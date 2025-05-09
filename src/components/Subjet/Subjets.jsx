@@ -4,7 +4,7 @@ import apiService from "../../services/apiService";
 import subjectService from "../../services/subjectService";
 import SubjectDetailModal from "./SubjectDetailModal";
 import SubjectCreateModal from "./CreateSubjectModal";
-import { IconButton, Tooltip } from "@mui/material";
+import { IconButton, Tooltip, CircularProgress } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import TableFilter from "../../shared/components/TableFilter/TableFilter";
@@ -29,7 +29,7 @@ function Subjects() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [noResults, setNoResults] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [catalogList, setCatalogList] = useState([]);
+  const [catalogList, setCatalogList] = useState([]); // Catalogo de Exámenes
   const ITEMS_PER_PAGE = 10;
 
   useEffect(() => {
@@ -48,15 +48,15 @@ function Subjects() {
 
     const fetchCatalogList = async () => {
       try {
-        const catalog = await apiService.getCatalogList();
-        setCatalogList(catalog);
+        const catalog = await apiService.getCatalogListExam();
+        setCatalogList(catalog); // Asigna el catálogo obtenido
       } catch (error) {
         console.error("Error al obtener el catálogo de exámenes:", error);
       }
     };
 
     fetchSubjects();
-    fetchCatalogList();
+    fetchCatalogList(); // Llama para obtener los datos del catálogo de exámenes
   }, []);
 
   const handleFilterChange = ({ field, value, ascending }) => {
@@ -136,108 +136,114 @@ function Subjects() {
     const file = event.target.files[0];
     if (!file) return;
 
+    if (file.size > 1024 * 100) {
+      console.error("El archivo excede el tamaño máximo permitido (100 KB).");
+      return;
+    }
+
     try {
-      await subjectService.importSubjectsCSV(file);
-      alert("CSV importado correctamente");
-      const updatedList = await apiService.getSubjectList();
-      setSubjects(updatedList);
-      setFilteredSubjects(updatedList);
+      const jsonSubjects = await subjectService.parseCSVFile(file);
+      console.log("Sujetos extraídos del CSV:", jsonSubjects);
     } catch (error) {
-      console.error("Error al importar CSV:", error);
-      alert("Error al importar CSV");
+      console.error("Error al procesar el archivo CSV:", error.message);
     }
   };
 
   return (
     <Layout>
       <div className="card">
-        <h2>Sujetos Registrados</h2>
-
-        <div className="subjects-toolbar">
-          <Tooltip title="Crear nuevo sujeto">
-            <IconButton onClick={openCreateSubjectModal}>
-              <AddCircleOutlineIcon />
-            </IconButton>
-          </Tooltip>
-
-          <Tooltip title="Importar CSV">
-            <IconButton component="label">
-              <UploadFileIcon />
-              <input type="file" accept=".csv" hidden onChange={handleCSVImport} />
-            </IconButton>
-          </Tooltip>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <h2 style={{ margin: 0 }}>Gestión de Evaluados</h2>
+          <div>
+            <Tooltip title="Importar Sujetos CSV">
+              <IconButton color="secondary" component="label">
+                <UploadFileIcon sx={{ fontSize: 28 }} />
+                <input type="file" accept=".csv" hidden onChange={handleCSVImport} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Agregar Sujeto">
+              <IconButton color="primary" onClick={openCreateSubjectModal}>
+                <AddCircleOutlineIcon sx={{ fontSize: 32 }} />
+              </IconButton>
+            </Tooltip>
+          </div>
         </div>
+
+        <p className="subtitle">Listado de Evaluados</p>
 
         <TableFilter fields={fields} onFilter={handleFilterChange} />
 
-        <table className="subjects-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Correo</th>
-              <th>Teléfono</th>
-              <th>Token</th>
-              <th>Fecha Creación</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {noResults ? (
-              <tr>
-                <td colSpan="7" style={{ textAlign: "center", color: "red" }}>
-                  No se encontraron resultados.
-                </td>
-              </tr>
-            ) : (
-              paginatedSubjects.map((subject) => (
-                <tr key={subject.subjectId}>
-                  <td>{subject.subjectId}</td>
-                  <td>{subject.subjectName}</td>
-                  <td>{subject.subjectEmail}</td>
-                  <td>{subject.subjectMobile}</td>
-                  <td>{subject.subjectToken}</td>
-                  <td>{new Date(subject.subjectCreated).toLocaleString()}</td>
-                  <td>
-                    <button onClick={() => handleSubjectClick(subject)}>Ver</button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-
-        {!noResults && (
-          <div className="pagination">
-            {Array.from({ length: Math.ceil(filteredSubjects.length / ITEMS_PER_PAGE) }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={currentPage === i + 1 ? 'active' : ''}
-              >
-                {i + 1}
-              </button>
-            ))}
+        {loading ? (
+          <div className="loading-container">
+            <CircularProgress />
           </div>
+        ) : (
+          <>
+            <table className="exams-table">
+              <thead>
+                <tr>
+                  <th>Nombre del Sujeto</th>
+                  <th>Correo Electrónico</th>
+                  <th>Teléfono Móvil</th>
+                  <th>Token de Autenticación</th>
+                  <th>Fecha de Creación</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {noResults ? (
+                  <tr>
+                    <td colSpan="6" className="no-results">
+                      No se encontraron evaluados con los criterios de búsqueda.
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedSubjects.map((subject) => (
+                    <tr key={subject.subjectId}>
+                      <td>{subject.subjectName}</td>
+                      <td>{subject.subjectEmail}</td>
+                      <td>{subject.subjectMobile}</td>
+                      <td>{subject.subjectToken}</td>
+                      <td>{new Date(subject.subjectCreated).toLocaleString()}</td>
+                      <td>
+                        <select
+                          onChange={() => handleSubjectClick(subject)}
+                          className="action-select"
+                        >
+                          <option value="">Acción</option>
+                          <option value="ver">Ver Detalles</option>
+                        </select>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+
+            {!noResults && (
+              <div className="pagination">
+                {Array.from({ length: Math.ceil(filteredSubjects.length / ITEMS_PER_PAGE) }, (_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={currentPage === i + 1 ? "active" : ""}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {selectedSubject && (
+          <SubjectDetailModal subject={selectedSubject} onClose={closeModal} loading={modalLoading} catalogList={catalogList} />
+        )}
+
+        {showCreateModal && (
+          <SubjectCreateModal onClose={closeCreateSubjectModal} onSubjectCreated={handleSubjectCreated} />
         )}
       </div>
-
-      {selectedSubject && (
-        <SubjectDetailModal
-          open={!!selectedSubject}
-          onClose={closeModal}
-          subject={selectedSubject}
-          loading={modalLoading}
-        />
-      )}
-
-      {showCreateModal && (
-        <SubjectCreateModal
-          open={showCreateModal}
-          onClose={closeCreateSubjectModal}
-          onCreated={handleSubjectCreated}
-        />
-      )}
     </Layout>
   );
 }

@@ -5,6 +5,7 @@ import Subject from "../models/Subject";
 import Catalog from "../models/Catalog";
 import QueueModel from "../models/QueueModel";
 import Log from "../models/Log";
+import CatalogExam from "../models/CatalogExam,js";
 
 const API_URL = "http://161.35.233.204:3000";
 const EXAMS_ENDPOINT = "/api/v1/exams";
@@ -65,6 +66,7 @@ const apiService = {
       const subjects = response.data.map(
         (subjectData) => new Subject(subjectData)
       );
+      console.log(subjects)
       return subjects;
     } catch (error) {
       console.error("Error al obtener los examinados:", error);
@@ -339,6 +341,35 @@ const apiService = {
 
 
 
+  },
+
+  createCatalog : async ( payload) => {
+    try {
+      const response = await axios.post(`${API_URL}/api/v1/Catalog`,payload, {
+        headers: getAuthHeaders(),
+      });
+      console.log(response.data);
+      return response.data;
+
+    } catch (error) {
+      console.error("Error al obtener la lista de catalogos:", error.message);
+      throw error;
+    }
+  },
+
+  getCatalogListExam: async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/v1/getCatalogListExam`, {
+        headers: getAuthHeaders(),
+      });
+      const catalogsData = response.data.map(
+        (catalogsData) => new CatalogExam(catalogsData)
+      );
+      return catalogsData; // Retorna el Subject creado
+    } catch (error) {
+      console.error("Error al obtener la lista de catalogos:", error.message);
+      throw error;
+    }
   },
 
   // Obtener lista de catalogos

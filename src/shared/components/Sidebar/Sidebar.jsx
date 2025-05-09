@@ -156,12 +156,6 @@ function Sidebar({ isOpen, toggleSidebar }) {
           </li>
         )}
 
-
-<li>
-          <button onClick={handleTranslte} className="logout-btn">
-          Traducciones
-          </button>
-        </li>
         <li>
           <button onClick={handleLogout} className="logout-btn">
             Salir
