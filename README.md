@@ -51,3 +51,6 @@ New-Item -ItemType File -Path  src/components/Navbar/Send-Code.jsx
 
 ## Start
 npm run dev
+
+mysql -u root -p
+1q2w3e4r5tPD!!
